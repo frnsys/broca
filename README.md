@@ -45,3 +45,9 @@ These examples run off a sample (n=10000) from a dataset of all the plot descrip
     python examples/markov.py
 
 The `Madlib` example takes awhile to train :\
+
+## Contributing
+If you have your own text generation approach or have a model that's missing from here,
+it would be great if you could share it! The only two requirements for contribution are
+keeping the model API consistent (with `train` and `speak` methods) and then an example
+to go in the `examples/` folder.

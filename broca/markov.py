@@ -1,4 +1,5 @@
-import sys
+if not intern:
+    from sys import intern
 import string
 import random
 
@@ -194,7 +195,7 @@ class Markov(Model):
         for token in doc.split(' '):
             # This saves memory by having
             # duplicate strings just point to the same memory.
-            token = sys.intern(token.strip(punctuation))
+            token = intern(token.strip(punctuation))
 
             # Ignore punctuation and stopwords
             if not token or stop_rule(token):

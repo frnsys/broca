@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-if not intern:
+try:
+    intern('')
+except NameError:
     from sys import intern
 import string
 import random

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 if not intern:
     from sys import intern
 import string

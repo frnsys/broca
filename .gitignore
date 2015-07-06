@@ -2,4 +2,7 @@
 *.egg-info
 *.pyc
 *.swp
+*.swo
+*.lprof
 dist/
+build/

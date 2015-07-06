@@ -1,4 +1,4 @@
-from broca import Markov
+from broca.generate import Markov
 from examples import docs
 
 m = Markov()

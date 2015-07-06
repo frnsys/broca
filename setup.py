@@ -1,17 +1,22 @@
+import os
 from setuptools import setup
+
+REQUIREMENTS = os.path.join(os.path.dirname(__file__), 'requirements.txt')
+REQUIREMENTS = open(REQUIREMENTS, 'r').read().splitlines()
 
 setup(
     name='broca',
-    version='0.1.0',
-    description='text generation models',
-    url='https://github.com/publicscience/broca',
+    version='0.2.0',
+    description='off-the-shelf nlp tools',
+    url='https://github.com/ftzeng/broca',
     author='Francis Tseng',
     author_email='f@frnsys.com',
-    license='GPLv3',
-
+    license='MIT',
     packages=['broca'],
-    install_requires=[
-        'nltk',
-        'numpy'
-    ],
+    zip_safe=True,
+    package_data={'': ['broca/data']},
+    include_package_data=True,
+    packages=find_packages(),
+    install_requires=REQUIREMENTS,
+    tests_require=['nose'],
 )

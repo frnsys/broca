@@ -9,7 +9,7 @@ import random
 
 from nltk.tokenize import sent_tokenize
 
-from .model import Model
+from broca.common import Model
 
 class Markov(Model):
     def __init__(self, ngram_size=1, max_chars=None, ramble=True, spasm=0.05, filepath='markov.pickle'):

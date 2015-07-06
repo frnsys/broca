@@ -5,7 +5,7 @@ import datetime
 
 from nltk import word_tokenize, pos_tag
 
-from .model import Model
+from broca.common import Model
 
 ELIGIBLE_TAGS = [
     'CD',   # numbers

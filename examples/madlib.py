@@ -1,4 +1,4 @@
-from broca import Madlib
+from broca.generate import Madlib
 from examples import docs
 
 m = Madlib()

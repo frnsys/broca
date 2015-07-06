@@ -1,0 +1,5 @@
+Cython==0.22
+nltk==3.0.2
+numpy==1.9.2
+scipy==0.15.1
+spacy==0.84

@@ -3,7 +3,7 @@
 
 There is some Python 2 support scattered throughout but the library has not been fully tested against it.
 
-This library is in development -- APIs may change.
+**This library is in development -- APIs may change.**
 
 to do: clean up this readme :)
 

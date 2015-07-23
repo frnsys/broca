@@ -1,40 +1,12 @@
-# -*- coding: utf-8 -*-
-
-"""
-Each preprocessing method should take in a string
-and return a string.
-"""
-
-from __future__ import unicode_literals
-
-import re
-import string
+from broca.pipeline import PipeType
 
 
-url_re = re.compile(r'https?:\/\/.*[\r\n]*', flags=re.MULTILINE)
+class PreProcessor():
+    input = PipeType.docs
+    output = PipeType.docs
 
+    def __call__(self, docs):
+        return self.preprocess(docs)
 
-def clean_doc(doc, remove_urls=True):
-    doc = doc.lower()
-
-    if remove_urls:
-        # Remove URLs
-        doc = url_re.sub('', doc)
-
-    doc = doc.replace('\'s ', ' ')
-    doc = strip_punct(doc)
-    return doc.strip()
-
-
-# Don't replace dashes, but do replace em-dashes with a space.
-punct = (string.punctuation + '“”').replace('-', '')
-dash_map = {ord(p): ' ' for p in '—'}
-punct_map = {ord(p): '' for p in punct}
-def strip_punct(doc):
-    try:
-        return doc.translate(dash_map).translate(punct_map)
-    except TypeError: # Python 2
-        trans = string.maketrans('', '')
-        return doc.replace('–', ' ').translate(trans, punct)
-
-
+    def preprocess(self, docs):
+        raise NotImplementedError

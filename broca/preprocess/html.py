@@ -1,7 +1,14 @@
+from broca.preprocess import PreProcessor
+
 try:
     from html.parser import HTMLParser
 except ImportError: # Python 2
     from HTMLParser import HTMLParser
+
+
+class HTMLCleaner(PreProcessor):
+    def preprocess(self, docs):
+        return [strip_html(d) for d in docs]
 
 
 def decode_html(s):

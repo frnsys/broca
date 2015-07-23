@@ -2,14 +2,15 @@
 Vectorize classes provide vector representations
 for a list of documents.
 """
+from broca.pipeline import PipeType
 
-from broca.common.model import Model
 
-
-class Vectorizer(Model):
+class Vectorizer():
     """
     Vectorizers should inherit from this class
     """
+    input = PipeType.docs
+    output = PipeType.vecs
 
     def vectorize(self, docs):
         """
@@ -27,3 +28,6 @@ class Vectorizer(Model):
         """
         # Optional
         raise NotImplementedError
+
+    def __call__(self, docs):
+        return self.vectorize(docs)

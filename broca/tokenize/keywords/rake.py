@@ -19,18 +19,20 @@ import os
 import re
 import operator
 from nltk.corpus import stopwords
+from broca.tokenize import Tokenizer
 stops_path = os.path.join(os.path.dirname(__file__),
-                '../data/SmartStoplist.txt')
+                '../../data/SmartStoplist.txt')
 
 
-def extract_keywords(docs):
-    stops = stopwords.words('english')
-    r = Rake(stops_path)
+class RAKE(Tokenizer):
+    def tokenize(self, docs):
+        stops = stopwords.words('english')
+        r = Rake(stops_path)
 
-    keywords = []
-    for doc in docs:
-        keywords.append([kw[0] for kw in r.run(doc) if kw not in stops])
-    return keywords
+        keywords = []
+        for doc in docs:
+            keywords.append([kw[0] for kw in r.run(doc) if kw not in stops])
+        return keywords
 
 
 def is_number(s):

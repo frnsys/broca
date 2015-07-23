@@ -7,7 +7,8 @@ See <http://stevenloria.com/tutorial-state-of-the-art-part-of-speech-tagging-in-
 However, it complicates the library's installation, and the spacy tagger is quite fast and good too.
 """
 
-from broca.common import spacy
+from broca.common.shared import spacy
+from broca.tokenize import Tokenizer
 
 CFG = {
     ('NNP', 'NNP'): 'NNP',
@@ -18,17 +19,18 @@ CFG = {
 }
 
 
-def extract_keywords(docs):
-    tags = ['NN', 'NNS', 'NNP', 'NNPS']
+class POS(Tokenizer):
+    def tokenize(self, docs):
+        tags = ['NN', 'NNS', 'NNP', 'NNPS']
 
-    keywords = []
-    for doc in docs:
-        toks = spacy(doc, tag=True, parse=False, entity=False)
-        tagged = [(t.lower_.strip(), t.tag_) for t in toks]
-        kws = [t for t, tag in tagged if tag in tags]
-        kws += extract_noun_phrases(tagged)
-        keywords.append(kws)
-    return keywords
+        keywords = []
+        for doc in docs:
+            toks = spacy(doc, tag=True, parse=False, entity=False)
+            tagged = [(t.lower_.strip(), t.tag_) for t in toks]
+            kws = [t for t, tag in tagged if tag in tags]
+            kws += extract_noun_phrases(tagged)
+            keywords.append(kws)
+        return keywords
 
 
 def extract_noun_phrases(tagged_doc):

@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from collections import defaultdict
 
 
@@ -35,3 +36,21 @@ def idf(t_docs):
         iidf[k] = v/mxm
 
     return iidf
+
+
+def build_sim_mat(items, sim_func):
+    n = len(items)
+    sim_mat = np.zeros((n, n))
+
+    for i, d1 in enumerate(items):
+        for j, d2 in enumerate(items):
+            if i == j:
+                sim_mat[i,j] = 1.
+
+            # Just build the lower triangle
+            # (assuming symmetric similarity)
+            elif i > j:
+                sim_mat[i,j] = sim_func(d1, d2)
+
+    # Construct the full sim mat from the lower triangle
+    return sim_mat + sim_mat.T - np.diag(sim_mat.diagonal())

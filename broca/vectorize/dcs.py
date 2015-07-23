@@ -82,53 +82,6 @@ class DCS(Vectorizer):
         return vecs/np.max(vecs)
 
 
-    def doc_similarity_matrix(self, docs):
-        """
-        Constructs a similarity matrix for a list of documents, based on their core semantic representations.
-
-        Alternatively, you can generate vector representations of the documents (using `vectorize`)
-        and compute similarity using a vector distance metric (cosine or w/e).
-        """
-        doc_core_sems, all_concepts = self._extract_core_semantics(docs)
-
-        # First compute a similarity matrix for all concepts
-        con_sim_mat = self._similarity_matrix(all_concepts)
-
-        # Then compute the similarity matrix for the documents
-        sim_mat = np.zeros((len(docs), len(docs)))
-        for i, core_sem1 in enumerate(doc_core_sems):
-            for j, core_sem2 in enumerate(doc_core_sems):
-                # Just build the lower triangle
-                if i >= j:
-                    sim_mat[i,j] = self._doc_similarity(core_sem1, core_sem2, all_concepts, con_sim_mat) if i != j else 1.
-        return sim_mat + sim_mat.T - np.diag(sim_mat.diagonal())
-
-
-    def _doc_similarity(self, core_sems1, core_sems2, all_concepts, con_sim_mat):
-        """
-        Compute DCS similarity for two documents, using their DSC representations.
-        """
-
-        # Some documents end up with no core sems
-        if not core_sems1 or not core_sems2:
-            return 0.
-
-        con_idx1, weights1 = zip(*[(all_concepts.index(c), w) for c, w in core_sems1])
-        con_idx2, weights2 = zip(*[(all_concepts.index(c), w) for c, w in core_sems2])
-
-        con_idx1 = list(con_idx1)
-        con_idx2 = list(con_idx2)
-        sub_mat = con_sim_mat[con_idx1][:,con_idx2]
-
-        max_sims1 = np.max(sub_mat, axis=1)
-        sim12 = max_sims1 * weights1
-
-        max_sims2 = np.max(sub_mat, axis=0)
-        sim21 = max_sims2 * weights2
-
-        return (sum(sim12) + sum(sim21))/sum(weights1 + weights2)
-
-
     def _process_doc(self, doc):
         """
         Applies DCS to a document to extract its core concepts and their weights.

@@ -1,10 +1,10 @@
 """
 Term similarity classes provide similarity values for a pair of documents.
 """
-from broca.common.model import Model
+from broca.common.model import Pipe
 
 
-class DocSimilarity(Model):
+class DocSimilarity(Pipe):
     """
     Doc similarity classes should inherit from this class
     """
@@ -26,3 +26,7 @@ class DocSimilarity(Model):
         Returns: a similarity matrix
         """
         pass
+    process = sim_mat
+
+
+from broca.similarity.doc.wikipedia import WikipediaSimilarity

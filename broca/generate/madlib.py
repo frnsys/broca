@@ -1,11 +1,7 @@
 import re
 import random
-import pickle
-import datetime
-
 from nltk import word_tokenize, pos_tag
-
-from broca.common import Model
+from broca.generate import Generator
 
 ELIGIBLE_TAGS = [
     'CD',   # numbers
@@ -20,7 +16,8 @@ ELIGIBLE_TAGS = [
     'RB'    # adverbs
 ]
 
-class Madlib(Model):
+
+class Madlib(Generator):
     def __init__(self, eligible_tags=ELIGIBLE_TAGS, filepath='madlib.pickle'):
         # Mad-lib patterns.
         self.patterns = []

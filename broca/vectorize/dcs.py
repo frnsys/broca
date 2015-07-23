@@ -45,6 +45,7 @@ from nltk.corpus import stopwords
 from nltk.corpus import wordnet as wn
 from scipy.sparse.csgraph import connected_components
 from broca.distance.sift4 import sift4
+from broca.vectorize import Vectorizer
 from broca.common.util import penn_to_wordnet
 from broca.common.shared import spacy
 
@@ -52,7 +53,7 @@ from broca.common.shared import spacy
 stops = stopwords.words('english')
 
 
-class DCS():
+class DCS(Vectorizer):
     def __init__(self, alpha=1.5, relation_weights=[0.8, 0.5, 0.3], n_chains=10):
         self.alpha = 1.5
         self.relation_weights = relation_weights
@@ -62,6 +63,7 @@ class DCS():
         # and (c1, c2) => similarity
         self.descriptions = {}
         self.concept_sims = {}
+
 
     def vectorize(self, docs):
         """

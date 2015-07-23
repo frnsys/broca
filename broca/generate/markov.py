@@ -6,12 +6,11 @@ except NameError:
     from sys import intern
 import string
 import random
-
 from nltk.tokenize import sent_tokenize
+from broca.generate import Generator
 
-from broca.common import Model
 
-class Markov(Model):
+class Markov(Generator):
     def __init__(self, ngram_size=1, max_chars=None, ramble=True, spasm=0.05, filepath='markov.pickle'):
         """
         ngram_size (int)

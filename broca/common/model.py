@@ -1,5 +1,6 @@
 import pickle
 
+
 class Model():
     def save(self):
         with open(self.filepath, 'wb') as dump:

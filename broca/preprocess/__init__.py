@@ -10,3 +10,7 @@ class PreProcessor():
 
     def preprocess(self, docs):
         raise NotImplementedError
+
+
+from .clean import Cleaner
+from .html import HTMLCleaner

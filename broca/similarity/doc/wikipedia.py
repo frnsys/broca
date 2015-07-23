@@ -11,18 +11,18 @@ from scipy.spatial.distance import cdist
 from broca.common.util import build_sim_mat
 from broca.similarity.doc import DocSimilarity
 from broca.knowledge.wikipedia import Wikipedia
-from broca.tokenize.keywords import rake
+from broca.tokenize.keyword import RAKE
 from broca.vectorize.bow import BoW
 
 
 class WikipediaSimilarity(Wikipedia, DocSimilarity):
-    def __init__(self, tokenizer=rake, vectorizer=BoW, wiki_conn=None):
+    def __init__(self, tokenizer=RAKE, vectorizer=BoW, wiki_conn=None):
         super().__init__(wiki_conn=wiki_conn)
         self.vectorizer = vectorizer
         self.tokenizer = tokenizer
 
     def sim_mat(self, docs):
-        tdocs = self.tokenizer(docs)
+        tdocs = self.tokenizer().tokenize(docs)
         all_terms = set([t for toks in tdocs for t in toks])
         print("fetching wikipedia pages...")
         bg_docs = [self.fetch_wikipage(t) for t in all_terms]

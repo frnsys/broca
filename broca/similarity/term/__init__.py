@@ -1,10 +1,9 @@
 """
 Term similarity classes provide similarity values for a pair of terms.
 """
-from broca.common.model import Model
 
 
-class TermSimilarity(Model):
+class TermSimilarity():
     """
     Term similarity classes should inherit from this class
     """
@@ -19,4 +18,4 @@ class TermSimilarity(Model):
         raise NotImplementedError
 
 
-from broca.similarity.term.wikipedia import WikipediaSimilarity
+from .wikipedia import WikipediaSimilarity

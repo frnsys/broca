@@ -1,9 +1,12 @@
+import re
 from broca.preprocess import PreProcessor
 
 try:
     from html.parser import HTMLParser
 except ImportError: # Python 2
     from HTMLParser import HTMLParser
+
+whitespace = re.compile(r'\s{2,}')
 
 
 class HTMLCleaner(PreProcessor):
@@ -35,7 +38,10 @@ def strip_html(html):
     html = '<div>{0}</div>'.format(html)
     s = HTMLStripper()
     s.feed(html)
-    return s.get_data()
+
+    # Stripping HTML adds additional whitespace, clean it up
+    cleaned = s.get_data().strip()
+    return whitespace.sub(' ', cleaned)
 
 
 class HTMLStripper(HTMLParser):

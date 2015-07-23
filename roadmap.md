@@ -1,11 +1,10 @@
 ## Roadmap
 
-- restructure library
-- standardize APIs (`sklearn`-like?)
-- write better documentation
-- add tests
-- add examples (though the tests could function as examples too)
-- add `hscluster`?
+[X] restructure library
+[X] standardize APIs
+[ ] add tests
+[ ] add examples (though the tests could function as examples too)
+[ ] write better documentation
 
 
 ## Overview

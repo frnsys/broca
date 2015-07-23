@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """
-Preprocess
-----------
-
 Each preprocessing method should take in a string
 and return a string.
 """

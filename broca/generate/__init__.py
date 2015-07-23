@@ -1,4 +1,4 @@
-from broca.common import Model
+from broca.common.model import Model
 
 
 class Generator(Model):

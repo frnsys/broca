@@ -3,7 +3,7 @@ Vectorize classes provide vector representations
 for a list of documents.
 """
 
-from broca.common import Model
+from broca.common.model import Model
 
 
 class Vectorizer(Model):

@@ -1,7 +1,7 @@
 """
 Term similarity classes provide similarity values for a pair of documents.
 """
-from broca.common import Model
+from broca.common.model import Model
 
 
 class DocSimilarity(Model):

@@ -38,6 +38,13 @@ def idf(t_docs):
     return iidf
 
 
+def gram_size(term):
+    """
+    Convenience func for getting n-gram length.
+    """
+    return len(term.split(' '))
+
+
 def build_sim_mat(items, sim_func):
     n = len(items)
     sim_mat = np.zeros((n, n))

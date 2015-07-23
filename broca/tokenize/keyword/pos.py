@@ -9,6 +9,7 @@ However, it complicates the library's installation, and the spacy tagger is quit
 
 from broca.common.shared import spacy
 from broca.tokenize import Tokenizer
+from broca.tokenize.util import prune
 
 CFG = {
     ('NNP', 'NNP'): 'NNP',
@@ -30,7 +31,7 @@ class POS(Tokenizer):
             kws = [t for t, tag in tagged if tag in tags]
             kws += extract_noun_phrases(tagged)
             keywords.append(kws)
-        return keywords
+        return prune(keywords)
 
 
 def extract_noun_phrases(tagged_doc):

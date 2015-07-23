@@ -1,9 +1,8 @@
-import string
-
-from nltk.tokenize import word_tokenize
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from broca.tokenize import Tokenizer
+from broca.common.shared import spacy
+from broca.common.util import penn_to_wordnet
 
 
 class Lemma(Tokenizer):
@@ -13,11 +12,6 @@ class Lemma(Tokenizer):
     def __init__(self):
         self.lemmr = WordNetLemmatizer()
         self.stops = stopwords.words('english')
-        self.punct = {ord(p): ' ' for p in string.punctuation + '“”'}
-
-        # Treat periods specially, replacing them with nothing.
-        # This is so that initialisms like F.D.A. get preserved as FDA.
-        self.period = {ord('.'): None}
 
     def tokenize(self, docs):
         """ Tokenizes a document, using a lemmatizer.
@@ -33,18 +27,21 @@ class Lemma(Tokenizer):
         for doc in docs:
             toks = []
 
-            # Strip punctuation.
-            doc = doc.translate(self.period)
-            doc = doc.translate(self.punct)
+            for t in spacy(doc, tag=True, parse=False, entity=False):
+                token = t.lower_.strip()
+                tag = t.tag_
 
-            for token in word_tokenize(doc):
-                # Ignore punctuation and stopwords
+                # Ignore stopwords
                 if token in self.stops:
                     continue
 
                 # Lemmatize
-                lemma = self.lemmr.lemmatize(token.lower())
-                toks.append(lemma)
+                wn_tag = penn_to_wordnet(tag)
+                if wn_tag is not None:
+                    lemma = self.lemmr.lemmatize(token, wn_tag)
+                    toks.append(lemma)
+                else:
+                    toks.append(token)
 
             tokens.append(toks)
 

@@ -9,7 +9,8 @@ See <https://en.wikipedia.org/wiki/Apriori_algorithm>
 
 from itertools import combinations
 from collections import defaultdict
-from broca.tokenize.keywords import POS
+from broca.tokenize.keyword import POS
+from broca.tokenize.util import prune
 from broca.tokenize import Tokenizer
 
 
@@ -58,7 +59,7 @@ class Apriori(Tokenizer):
 
         # Map documents to their keywords.
         keywords = flatten(last_set)
-        return [[kw for kw in keywords if kw in doc] for doc in docs]
+        return prune([[kw for kw in keywords if kw in doc] for doc in docs])
 
 
 def flatten(nested_tuple):

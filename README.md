@@ -5,7 +5,27 @@ There is some Python 2 support scattered throughout but the library has not been
 
 **This library is in development -- APIs may change.**
 
-to do: clean up this readme :)
+## Overview
+
+`broca` is a NLP library for experimenting with various approaches.
+
+When I implement a new method, often from a paper or another source, I add it here so that it can be re-applied elsewhere.
+Eventually I hope that `broca` can become a battery of experimental NLP methods which can easily be thrown at a new problem.
+
+`broca` is structured like so:
+
+- `common`: misc utilities and classes reused across the whole library. Also includes shared objects.
+- `distance`: for measuring string distance. This should probably be renamed though, since "distance" means a lot more than just string distance.
+- `tokenize`: various tokenization methods
+    - `keyword`: keyword-based tokenization methods (i.e. keyword extraction methods)
+- `vectorize`: various ways of representing documents as vectors
+- `similarity`: various ways of computing similarity
+    - `term`: for computing similarity between two terms
+    - `doc`: for computing similarity matrices for sets of documents
+- `preprocess`: for preprocessing text, i.e. cleaning
+- `knowledge`: tools for preparing or incorporating external knowledge sources, such as Wikipedia or IDF on auxiliary corpora
+- `visualize`: convenience stuff for visualizing output
+- `pipeline`: for easily chaining `broca` classes into pipelines - useful for rapidly iterating
 
 
 ## Installation

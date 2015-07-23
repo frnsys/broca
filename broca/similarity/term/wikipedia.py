@@ -33,7 +33,7 @@ class WikipediaSimilarity(TermSimilarity):
         # Fetch wikipages, compute cosine similarity matrix
         docs = [self._fetch_wikipage(t) for t in terms]
         vectr = BoW()
-        vecs = vectr.train(docs)
+        vecs = vectr.vectorize(docs)
         dist_mat = pdist(vecs.todense(), metric='cosine')
         dist_mat = squareform(dist_mat)
         self.sim_mat = 1/(1 + dist_mat)

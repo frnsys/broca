@@ -30,11 +30,15 @@ class BoW(Vectorizer):
         ]
 
         self.pipeline = Pipeline(args)
+        self.trained = False
 
     def vectorize(self, docs):
+        if not self.trained:
+            return self.train(docs)
         return self.pipeline.transform(docs)
 
     def train(self, docs):
+        self.trained = True
         return self.pipeline.fit_transform(docs)
 
     @property

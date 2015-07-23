@@ -7,9 +7,7 @@ See <http://stevenloria.com/tutorial-state-of-the-art-part-of-speech-tagging-in-
 However, it complicates the library's installation, and the spacy tagger is quite fast and good too.
 """
 
-from broca.common.util import handle_args
 from broca.common import spacy
-
 
 CFG = {
     ('NNP', 'NNP'): 'NNP',
@@ -20,7 +18,6 @@ CFG = {
 }
 
 
-@handle_args
 def extract_keywords(docs):
     tags = ['NN', 'NNS', 'NNP', 'NNPS']
 

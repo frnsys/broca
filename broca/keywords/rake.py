@@ -19,12 +19,10 @@ import os
 import re
 import operator
 from nltk.corpus import stopwords
-from broca.common.util import handle_args
 stops_path = os.path.join(os.path.dirname(__file__),
                 '../data/SmartStoplist.txt')
 
 
-@handle_args
 def extract_keywords(docs):
     stops = stopwords.words('english')
     r = Rake(stops_path)

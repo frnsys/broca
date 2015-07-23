@@ -10,10 +10,8 @@ See <https://en.wikipedia.org/wiki/Apriori_algorithm>
 from itertools import combinations
 from collections import defaultdict
 from broca.keywords import pos
-from broca.common.util import handle_args
 
 
-@handle_args
 def extract_keywords(docs, min_sup=0.5):
     """
     The first pass consists of converting documents

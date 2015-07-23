@@ -1,22 +1,5 @@
 import math
 from collections import defaultdict
-from functools import wraps
-
-
-def handle_args(f):
-    """
-    Converts a single-string argument to a list-of-strings argument
-    and handles the output accordingly.
-    """
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not isinstance(args[0], list):
-            args = list(args)
-            args[0] = [args[0]]
-            return f(*args, **kwargs)[0]
-        else:
-            return f(*args, **kwargs)
-    return decorated
 
 
 def penn_to_wordnet(tag):
@@ -32,7 +15,6 @@ def penn_to_wordnet(tag):
     elif tag in ['JJ', 'JJR', 'JJS']:
         return 'a' #wordnet.ADJ
     return None
-
 
 
 def idf(t_docs):

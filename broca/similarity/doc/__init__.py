@@ -19,5 +19,10 @@ class DocSimilarity(Model):
         raise NotImplementedError
 
     def sim_mat(self, docs):
-        # TO DO
+        """
+        Args:
+            - docs -> a list of strings
+
+        Returns: a similarity matrix
+        """
         pass

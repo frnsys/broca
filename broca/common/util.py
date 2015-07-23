@@ -1,6 +1,4 @@
-import math
 import numpy as np
-from collections import defaultdict
 
 
 def penn_to_wordnet(tag):
@@ -18,24 +16,6 @@ def penn_to_wordnet(tag):
     return None
 
 
-def idf(t_docs):
-    N = len(t_docs)
-    iidf = defaultdict(int)
-    for terms in t_docs:
-        # Only care about presence, not frequency,
-        # so convert to a set
-        for t in set(terms):
-            iidf[t] += 1
-
-    for k, v in iidf.items():
-        iidf[k] = math.log(N/v + 1, 10)
-
-    # Normalize
-    mxm = max(iidf.values())
-    for k, v in iidf.items():
-        iidf[k] = v/mxm
-
-    return iidf
 
 
 def gram_size(term):

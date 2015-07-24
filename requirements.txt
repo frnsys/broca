@@ -3,3 +3,5 @@ nltk==3.0.2
 numpy==1.9.2
 scipy==0.15.1
 spacy==0.84
+scikit-learn==0.16.0
+eatiht==0.1.14

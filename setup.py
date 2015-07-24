@@ -16,7 +16,6 @@ setup(
     zip_safe=True,
     package_data={'': ['broca/data']},
     include_package_data=True,
-    packages=find_packages(),
     install_requires=REQUIREMENTS,
     tests_require=['nose'],
 )

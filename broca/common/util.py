@@ -1,22 +1,5 @@
-import math
-from collections import defaultdict
-from functools import wraps
-
-
-def handle_args(f):
-    """
-    Converts a single-string argument to a list-of-strings argument
-    and handles the output accordingly.
-    """
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not isinstance(args[0], list):
-            args = list(args)
-            args[0] = [args[0]]
-            return f(*args, **kwargs)[0]
-        else:
-            return f(*args, **kwargs)
-    return decorated
+import numpy as np
+from broca.common.shared import spacy
 
 
 def penn_to_wordnet(tag):
@@ -34,22 +17,26 @@ def penn_to_wordnet(tag):
     return None
 
 
+def gram_size(term):
+    """
+    Convenience func for getting n-gram length.
+    """
+    return len(term.split(' '))
 
-def idf(t_docs):
-    N = len(t_docs)
-    iidf = defaultdict(int)
-    for terms in t_docs:
-        # Only care about presence, not frequency,
-        # so convert to a set
-        for t in set(terms):
-            iidf[t] += 1
 
-    for k, v in iidf.items():
-        iidf[k] = math.log(N/v + 1, 10)
+def build_sim_mat(items, sim_func):
+    n = len(items)
+    sim_mat = np.zeros((n, n))
 
-    # Normalize
-    mxm = max(iidf.values())
-    for k, v in iidf.items():
-        iidf[k] = v/mxm
+    for i, d1 in enumerate(items):
+        for j, d2 in enumerate(items):
+            if i == j:
+                sim_mat[i,j] = 1.
 
-    return iidf
+            # Just build the lower triangle
+            # (assuming symmetric similarity)
+            elif i > j:
+                sim_mat[i,j] = sim_func(d1, d2)
+
+    # Construct the full sim mat from the lower triangle
+    return sim_mat + sim_mat.T - np.diag(sim_mat.diagonal())

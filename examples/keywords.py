@@ -2,15 +2,8 @@
 Runs all keyword extractors and displays their outputs.
 """
 
-import os
-import pkgutil
-import importlib
-from broca import keywords
-
-# Load all the keyword extractor modules.
-package = os.path.dirname(keywords.__file__)
-modules = [name for _, name, _ in pkgutil.iter_modules([package])]
-extractors = {module: importlib.import_module('{0}.{1}'.format(keywords.__name__, module)) for module in modules}
+from broca.tokenize import keyword, Tokenizer
+tokenizers = {name: cls for name, cls in keyword.__dict__.items() if isinstance(cls, type) and issubclass(cls, Tokenizer)}
 
 # http://www.nytimes.com/interactive/2015/04/14/dining/field-guide-to-the-sandwich.html
 docs = [
@@ -46,9 +39,9 @@ expected = {
     'shawarmas'
 }
 
-for name, mod in extractors.items():
+for name, cls in tokenizers.items():
     print('\n{0}\n~~~~~~~~~~~'.format(name))
-    keywords = mod.extract_keywords(docs)
+    keywords = cls().tokenize(docs)
 
     # Flatten
     keywords = [k for kws in keywords for k in kws]

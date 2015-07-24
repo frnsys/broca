@@ -1,8 +1,12 @@
 from itertools import product
+from broca.pipeline.cryo import Cryo
 
 
 class Pipeline():
-    def __init__(self, *pipes):
+    def __init__(self, *pipes, **kwargs):
+        self.freeze = kwargs.get('freeze', True)
+        self.cryo = Cryo()
+
         # If any of the pipes is a list, we are building multiple pipelines
         if any(isinstance(p, list) for p in pipes):
             # Coerce all pipes to lists
@@ -27,7 +31,7 @@ class Pipeline():
             return [p(input) for p in self.pipelines]
         else:
             for pipe in self.pipes:
-                output = pipe(input)
+                output = self.cryo(pipe, input) if self.freeze else pipe(input)
                 input = output
             return output
 

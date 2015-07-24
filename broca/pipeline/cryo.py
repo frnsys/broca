@@ -10,15 +10,22 @@ if not os.path.exists(base):
 
 
 class Cryo():
+    def __init__(self, refresh=False):
+        self.refresh = refresh
+
     def __call__(self, func, *args, **kwargs):
         # Compute the signature
         mod = inspect.getmodule(func)
         mod = mod.__name__
+
         try:
             name = func.__name__
             src = inspect.getsource(func)
+
         except AttributeError:
-            name = type(func).__name__
+            # Get the repr of the Pipe,
+            # which reflects its init args
+            name = str(func)
             src = inspect.getsource(func.__call__)
 
         meta = {
@@ -38,7 +45,7 @@ class Cryo():
         print(path)
 
         # Thaw
-        if os.path.exists(path):
+        if os.path.exists(path) and not self.refresh:
             result = joblib.load(path)
 
         else:

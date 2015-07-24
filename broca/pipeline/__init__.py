@@ -5,7 +5,8 @@ from broca.pipeline.cryo import Cryo
 class Pipeline():
     def __init__(self, *pipes, **kwargs):
         self.freeze = kwargs.get('freeze', True)
-        self.cryo = Cryo()
+        self.refresh = kwargs.get('refresh', False)
+        self.cryo = Cryo(refresh=self.refresh)
 
         # If any of the pipes is a list, we are building multiple pipelines
         if any(isinstance(p, list) for p in pipes):
@@ -35,7 +36,6 @@ class Pipeline():
                 input = output
             return output
 
-
     def __repr__(self):
         if hasattr(self, 'pipelines'):
             return 'Multi-Pipeline: {}'.format(' || '.join([str(p) for p in self.pipelines]))
@@ -48,3 +48,29 @@ class PipeType():
     docs = 'docs'
     vecs = 'vecs'
     sim_mat = 'sim_mat'
+
+
+class Pipe():
+    input = None
+    output = None
+    type = PipeType
+
+    def __new__(cls, *args, **kwargs):
+        obj = super().__new__(cls)
+        obj.args = args
+        obj.kwargs = kwargs
+
+        # Build Pipe's signature
+        args = ', '.join([
+            ', '.join(map(str, args)),
+            ', '.join(['{}={}'.format(x, y) for x, y in kwargs.items()])
+        ])
+        obj.sig = '{}({})'.format(
+            cls.__name__,
+            args
+        )
+
+        return obj
+
+    def __repr__(self):
+        return self.sig

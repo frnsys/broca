@@ -47,3 +47,24 @@ class PipelineTests(unittest.TestCase):
         for i, output in enumerate(outputs):
             for o, e in zip(output, expected[i]):
                 self.assertEqual(set(o), set(e))
+
+    def test_cryo_diff_pipe_init(self):
+        pipeline = Pipeline(
+            Cleaner(),
+        )
+        output1 = pipeline(self.docs)
+
+        pipeline = Pipeline(
+            Cleaner(),
+        )
+        output2 = pipeline(self.docs)
+
+        self.assertEqual(output1, output2)
+
+        # Make sure cryo picks up on differently initialized classes
+        pipeline = Pipeline(
+            Cleaner(lowercase=False),
+        )
+        output3 = pipeline(self.docs)
+
+        self.assertNotEqual(output1, output3)

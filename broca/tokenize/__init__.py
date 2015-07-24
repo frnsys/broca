@@ -1,9 +1,9 @@
-from broca.pipeline import PipeType
+from broca.pipeline import Pipe
 
 
-class Tokenizer():
-    input = PipeType.docs
-    output = PipeType.tokens
+class Tokenizer(Pipe):
+    input = Pipe.type.docs
+    output = Pipe.type.tokens
 
     def __call__(self, docs):
         return self.tokenize(docs)

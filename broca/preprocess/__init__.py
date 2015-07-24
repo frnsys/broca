@@ -1,9 +1,9 @@
-from broca.pipeline import PipeType
+from broca.pipeline import Pipe
 
 
 class PreProcessor():
-    input = PipeType.docs
-    output = PipeType.docs
+    input = Pipe.type.docs
+    output = Pipe.type.docs
 
     def __call__(self, docs):
         return self.preprocess(docs)

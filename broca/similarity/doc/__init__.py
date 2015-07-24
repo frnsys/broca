@@ -25,7 +25,6 @@ class DocSimilarity():
         Returns: a similarity matrix
         """
         pass
-    process = sim_mat
 
 
 from .wikipedia import WikipediaSimilarity

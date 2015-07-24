@@ -81,18 +81,42 @@ p = Pipeline(
 vecs1, vecs2 = p(docs)
 ```
 
-Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components are compatible.
+Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components ("pipes") are compatible.
+
+### Freezing pipes
+
+By default, pipelines are frozen - that is, each pipe's output memoized to disk based on the inputs it receives. If the input changes or the pipe's `__call__` method is redefined, its output will be recomputed; otherwise, it will be loaded from disk. This means you can easily swap out components in a pipeline without needing to redundantly recompute parts which are not affected.
+
+You can disable this behavior for a pipeline by specifying `freeze=False`:
+
+```python
+p = Pipeline(
+        HTMLCleaner(),
+        Cleaner(),
+        freeze=False
+    )
+```
+
+You can force the recomputation of an entire pipe by specifying `refresh=True`:
+
+```python
+p = Pipeline(
+        HTMLCleaner(),
+        Cleaner(),
+        refresh=True
+    )
+```
 
 ### Implementing a pipe
 
-Implementing your own pipeline component is easy. Just define a class and define its `__call__` method and `input` and `output` class attributes, which should be `PipeType`s:
+Implementing your own pipeline component is easy. Just define a class which inherits from `broca.pipeline.Pipe` and define its `__call__` method and `input` and `output` class attributes, which should from `Pipe.type`:
 
 ```python
-from broca.pipeline import PipeType
+from broca.pipeline import Pipe
 
-class MyPipe():
-    input = PipeType.docs
-    output = PipeType.vecs
+class MyPipe(Pipe):
+    input = Pipe.type.docs
+    output = Pipe.type.vecs
 
     def __call__(self, docs):
         # do something with docs to get vectors

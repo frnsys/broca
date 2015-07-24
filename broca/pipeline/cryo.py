@@ -42,7 +42,6 @@ class Cryo():
 
         dir = os.path.join(base, mod.replace('.', '/'), name)
         path = os.path.join(dir, sig) + '.pkl'
-        print(path)
 
         # Thaw
         if os.path.exists(path) and not self.refresh:

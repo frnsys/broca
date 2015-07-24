@@ -25,7 +25,7 @@ Eventually I hope that `broca` can become a battery of experimental NLP methods 
     - `doc`: for computing similarity matrices for sets of documents
 - `preprocess`: for preprocessing text, i.e. cleaning
 - `knowledge`: tools for preparing or incorporating external knowledge sources, such as Wikipedia or IDF on auxiliary corpora
-- `pipeline`: for easily chaining `broca` classes into pipelines - useful for rapidly iterating
+- `pipeline`: for easily chaining `broca` classes into pipelines - useful for rapid prototyping
 
 
 ## Installation
@@ -53,29 +53,33 @@ You also need to install the `spacy` library's data:
 
 You can use `broca`'s module conventionally, or you can take advantage of its pipelines:
 
-    from broca.pipeline import Pipeline
-    from broca.preprocess import Cleaner, HTMLCleaner
-    from broca.vectorize import BoW, DCS
+```python
+from broca.pipeline import Pipeline
+from broca.preprocess import Cleaner, HTMLCleaner
+from broca.vectorize import BoW, DCS
 
-    p = Pipeline(
-            HTMLCleaner(),
-            Cleaner(),
-            BoW()
-        )
+p = Pipeline(
+        HTMLCleaner(),
+        Cleaner(),
+        BoW()
+    )
 
-    vecs = p(docs)
+vecs = p(docs)
+```
 
 Pipelines allow you to chain `broca`'s objects and easily swap them out.
 
 You can also build multi-pipelines to try out a variety of pipelines simultaneously:
 
-    p = Pipeline(
-            HTMLCleaner(),
-            Cleaner(),
-            [BoW(), DCS()]
-        )
+```python
+p = Pipeline(
+        HTMLCleaner(),
+        Cleaner(),
+        [BoW(), DCS()]
+    )
 
-    vecs1, vecs2 = p(docs)
+vecs1, vecs2 = p(docs)
+```
 
 Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components are compatible.
 

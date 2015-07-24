@@ -97,7 +97,7 @@ p = Pipeline(
     )
 ```
 
-You can force the recomputation of an entire pipe by specifying `refresh=True`:
+You can force the recomputation of an entire pipeline by specifying `refresh=True`:
 
 ```python
 p = Pipeline(

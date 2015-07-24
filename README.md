@@ -132,7 +132,7 @@ class MyPipe(Pipe):
 
 ## Examples
 
-You can get a sense of the keyword extractor quality by running the `examples/keywords.py` script.
+There are a few usage examples in the `examples` directory.
 
 
 ## Tests

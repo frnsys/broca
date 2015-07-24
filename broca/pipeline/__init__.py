@@ -45,6 +45,8 @@ class Pipeline():
 
 class PipeType():
     tokens = 'tokens'
+    assetid_doc = 'assetid_doc' # type == dict,  {asset_id : body_text }
+    assetid_vec = 'assetid_vec' # type == dict,  {asset_id : vec }
     docs = 'docs'
     vecs = 'vecs'
     sim_mat = 'sim_mat'

@@ -23,7 +23,11 @@ class KeywordTokenizeTests(unittest.TestCase):
             ['cat dog runs sad']
         ]
         t_docs = keyword.RAKE().tokenize(self.docs)
-        self.assertEqual(t_docs, expected_t_docs)
+
+        # Order not necessarily preserved
+        for i, output in enumerate(t_docs):
+            for o, e in zip(output, expected_t_docs[i]):
+                self.assertEqual(set(o), set(e))
 
     def test_apriori(self):
         expected_t_docs = [

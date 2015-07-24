@@ -58,7 +58,6 @@ class PipelineTests(unittest.TestCase):
             Cleaner(),
         )
         output2 = pipeline(self.docs)
-
         self.assertEqual(output1, output2)
 
         # Make sure cryo picks up on differently initialized classes
@@ -66,5 +65,4 @@ class PipelineTests(unittest.TestCase):
             Cleaner(lowercase=False),
         )
         output3 = pipeline(self.docs)
-
         self.assertNotEqual(output1, output3)

@@ -1,7 +1,7 @@
 from broca.pipeline import Pipe
 
 
-class PreProcessor():
+class PreProcessor(Pipe):
     input = Pipe.type.docs
     output = Pipe.type.docs
 

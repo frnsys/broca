@@ -38,9 +38,9 @@ class Pipeline():
 
     def __repr__(self):
         if hasattr(self, 'pipelines'):
-            return 'Multi-Pipeline: {}'.format(' || '.join([str(p) for p in self.pipelines]))
+            return 'MultiPipeline: {}'.format(' || '.join([str(p) for p in self.pipelines]))
         else:
-            return ' -> '.join([type(p).__name__ for p in self.pipes])
+            return ' -> '.join([str(p) for p in self.pipes])
 
 
 class PipeType():
@@ -61,10 +61,10 @@ class Pipe():
         obj.kwargs = kwargs
 
         # Build Pipe's signature
-        args = ', '.join([
+        args = ', '.join([ags for ags in [
             ', '.join(map(str, args)),
             ', '.join(['{}={}'.format(x, y) for x, y in kwargs.items()])
-        ])
+        ] if ags])
         obj.sig = '{}({})'.format(
             cls.__name__,
             args

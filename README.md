@@ -109,7 +109,9 @@ p = Pipeline(
 
 ### Implementing a pipe
 
-Implementing your own pipeline component is easy. Just define a class which inherits from `broca.pipeline.Pipe` and define its `__call__` method and `input` and `output` class attributes, which should from `Pipe.type`:
+Implementing your own pipeline component is easy. Just define a class which inherits from `broca.pipeline.Pipe` and define its `__call__` method and `input` and `output` class attributes, which should be from `Pipe.type`.
+
+The call method must take only two arguments: `self` and then the input from the preceding pipe. If there are parameters to be specified, they should be handled in the pipe's `__init__` method.
 
 ```python
 from broca.pipeline import Pipe
@@ -118,9 +120,12 @@ class MyPipe(Pipe):
     input = Pipe.type.docs
     output = Pipe.type.vecs
 
+    def __init__(self, some_param):
+        self.some_param = some_param
+
     def __call__(self, docs):
         # do something with docs to get vectors
-        vecs = make_vecs_func(docs)
+        vecs = make_vecs_func(docs, self.some_param)
         return vecs
 ```
 

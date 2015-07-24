@@ -13,34 +13,51 @@ import string
 import Vectorizer
 
 
-
-class Doc2Vec_Pipeline(Pipe):
+class Doc2Vec_Wrapper(Vectorizer):
 
     input = Pipe.type.assetid_docs
     output = Pipe.type.assetid_vecs
 
-    def __call__(self, docs, path_to_model=None, stream_train=False):
-        # do something with docs to get vectors
-        wrapper = Doc2Vec_Wrapper(path_to_model=path_to_model)
-        vecs = wrapper.vectorize(docs, stream_train)
+    def __init__(self, size=300, window=8, min_count=2, workers=8, path_to_model=None, stream_train=False):
+
+        '''
+        Initializes the Doc2Vec_Wrapper class. 
+
+        Args:
+            size (int): Specifies the size of the feature-vector. Defaults to 300
+            window (int): Specifies the size of the context window from which the feature vector is learned
+            min_count (int): Specifices the minimum number of instances of each word that is saved in the model
+            workers (int): number of parallel processes
+            path_to_model (str): Specifies model on disk 
+            stream_train (bool): If true, update word vectors with new sentences. If false, just get doc vecs
+        '''
+
+        self.stream_train=stream_train
+
+        self.is_trained = False
+        self.model = None
+
+        ## if a path is passed, try to load from disk. Otherwise, retrain anyway
+        if path_to_model:
+            try:
+                self.is_trained = True
+                self.model = Doc2Vec.load(path_to_model)
+            except:
+                pass
+
+        ## params for Doc2Vec 
+        self.size = size ## size of the vector
+        self.window = window ## size of the context window
+        self.min_count = min_count ## minimum count of vocab to store in binary tree
+        self.workers = workers ## number of parallel processes == number of cores on the computer
+
+
+    def __call__(self, docs):
+        vecs = self.vectorize(docs)
         return vecs
 
 
-class Doc2Vec_Wrapper(Vectorizer):
-
-    def __init__(self, size=300, window=8, min_count=2, workers=8, path_to_model=None):
-        self.is_trained = False
-        self.model = None
-        if path_to_model:
-            self.is_trained = True
-            self.model = Doc2Vec.load(path_to_model)
-
-        self.size = size
-        self.window = window
-        self.min_count = min_count
-        self.workers = workers
-
-    def vectorize( self, docs, stream_train=False):
+    def vectorize( self, docs ):
         '''
         Returns the feature vectors for a set of docs. If model is not already be trained, 
         then self.train() is called.
@@ -71,7 +88,7 @@ class Doc2Vec_Wrapper(Vectorizer):
         if len(unfound) > 0:
             ## for all assets not in the model, update the model and then get their sentence vectors.
             sentences = [self._gen_sentence(item) for item in unfound]
-            self.update_model(sentences, train=stream_train)
+            self.update_model(sentences, train=self.stream_train)
             asset_id2vector.update({item[0]: self.model['DOC_' + str(item[0])] for item in unfound})
 
         return asset_id2vector
@@ -112,7 +129,7 @@ class Doc2Vec_Wrapper(Vectorizer):
             path (str): relative or absolute path to save the module
         '''
         self.model.save(path)
-        
+
 
     def update_model(self, sentences, update_labels_bool):
         '''

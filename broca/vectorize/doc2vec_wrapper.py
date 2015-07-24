@@ -3,14 +3,18 @@ Doc2Vec wrapper that handles the more idiosyncratic aspects of implementing Gens
 and also implements online testing as described in ...
 
 """
+## add relative paths for pipeline and cyro modules
+import sys
+sys.path.insert(0, '../')
+sys.path.insert(0, '../../')
 
 import numpy as np 
 import gensim
 from gensim.models.doc2vec import Doc2Vec, LabeledSentence, LabeledLineSentence
-from ..broca.pipeline import Pipe 
+from pipeline import Pipe 
 import re
 import string
-import Vectorizer
+from vectorize import Vectorizer
 
 
 class Doc2Vec_Wrapper(Vectorizer):
@@ -98,11 +102,13 @@ class Doc2Vec_Wrapper(Vectorizer):
         '''
         Train Doc2Vec on a series of docs. Train from scratch or update.
 
-        input:
+        Args:
             docs: list of tuples (assetid, body_text) or dictionary {assetid : body_text}
             retrain: boolean, retrain from scratch or update model
 
-        output: saves model in class to self.model   
+        saves model in class to self.model   
+
+        Returns: 0 if successful
         '''
 
         if type(docs) == dict:
@@ -111,14 +117,14 @@ class Doc2Vec_Wrapper(Vectorizer):
         train_sentences = [self._gen_sentence(item) for item in docs]
         if (self.is_trained) and (retrain == False): 
             ## online training 
-            self.update_model(sentences, update_labels_bool=False)
+            self.update_model(train_sentences, update_labels_bool=True)
 
         else: 
             ## train from scratch
             self.model = Doc2Vec(train_sentences, size=self.size, window=self.window, min_count=self.min_count, workers=self.workers)
             self.is_trained = True
 
-        return 'done training'
+        return 0
 
 
     def save_model(self, path):
@@ -144,7 +150,7 @@ class Doc2Vec_Wrapper(Vectorizer):
 
         '''
 
-        n_sentences = self.add_new_labels(sentences)
+        n_sentences = self._add_new_labels(sentences)
 
         # add new rows to self.model.syn0
         n = self.model.syn0.shape[0]
@@ -195,7 +201,7 @@ class Doc2Vec_Wrapper(Vectorizer):
             assetid_body_tuple (tuple): (assetid, bodytext) pair 
         '''
         asset_id, body = assetid_body_tuple
-        text = self.process(body)
+        text = self._process(body)
         sentence = LabeledSentence(text, labels=['DOC_%s' % str(asset_id)])
         return sentence
 

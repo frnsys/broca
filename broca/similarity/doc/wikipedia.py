@@ -24,14 +24,13 @@ class WikipediaSimilarity(Wikipedia, DocSimilarity):
     def sim_mat(self, docs):
         tdocs = self.tokenizer().tokenize(docs)
         all_terms = set([t for toks in tdocs for t in toks])
-        print("fetching wikipedia pages...")
         bg_docs = [self.fetch_wikipage(t) for t in all_terms]
 
-        print('vectorizing docs....')
+        # Filter out empty docs (will mess up cosine similarity)
+        bg_docs = [bg for bg in bg_docs if bg]
+
         n_docs = len(docs)
         all_docs = docs + bg_docs
-
-        print(all_docs)
 
         vectr = self.vectorizer()
         vecs = vectr.vectorize(all_docs).todense()
@@ -41,7 +40,6 @@ class WikipediaSimilarity(Wikipedia, DocSimilarity):
 
         # Bridging space representation of the docs
         doc_vecs = cdist(doc_vecs, bg_vecs, metric='cosine')
-        print(doc_vecs)
 
         return build_sim_mat(doc_vecs, self.compute_bridge_similarity)
 
@@ -58,5 +56,4 @@ class WikipediaSimilarity(Wikipedia, DocSimilarity):
         # The paper does not mention using logs but start to get into underflow
         # issues multiplying so many decimal values
         lEWP = -1 * np.log(EWP)
-        print('lewp', lEWP)
         return 1/np.sum(lEWP)

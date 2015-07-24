@@ -31,3 +31,7 @@ class Vectorizer():
 
     def __call__(self, docs):
         return self.vectorize(docs)
+
+
+from .bow import BoW
+from .dcs import DCS

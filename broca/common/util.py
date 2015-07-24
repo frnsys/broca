@@ -1,4 +1,5 @@
 import numpy as np
+from broca.common.shared import spacy
 
 
 def penn_to_wordnet(tag):
@@ -14,8 +15,6 @@ def penn_to_wordnet(tag):
     elif tag in ['JJ', 'JJR', 'JJS']:
         return 'a' #wordnet.ADJ
     return None
-
-
 
 
 def gram_size(term):

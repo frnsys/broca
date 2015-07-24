@@ -5,7 +5,27 @@ There is some Python 2 support scattered throughout but the library has not been
 
 **This library is in development -- APIs may change.**
 
-to do: clean up this readme :)
+
+## Overview
+
+`broca` is a NLP library for experimenting with various approaches. So everything in this library is somewhat experimental and meant for rapid prototyping of NLP methods.
+
+When I implement a new method, often from a paper or another source, I add it here so that it can be re-applied elsewhere.
+Eventually I hope that `broca` can become a battery of experimental NLP methods which can easily be thrown at a new problem.
+
+`broca` is structured like so:
+
+- `common`: misc utilities and classes reused across the whole library. Also includes shared objects.
+- `distance`: for measuring string distance. This should probably be renamed though, since "distance" means a lot more than just string distance.
+- `tokenize`: various tokenization methods
+    - `keyword`: keyword-based tokenization methods (i.e. keyword extraction methods)
+- `vectorize`: various ways of representing documents as vectors
+- `similarity`: various ways of computing similarity
+    - `term`: for computing similarity between two terms
+    - `doc`: for computing similarity matrices for sets of documents
+- `preprocess`: for preprocessing text, i.e. cleaning
+- `knowledge`: tools for preparing or incorporating external knowledge sources, such as Wikipedia or IDF on auxiliary corpora
+- `pipeline`: for easily chaining `broca` classes into pipelines - useful for rapidly iterating
 
 
 ## Installation
@@ -28,54 +48,45 @@ You also need to install the `spacy` library's data:
 
     $ python -m spacy.en.download
 
-## The Models
-There are only two models at the moment.
-
-### Markov
-`Markov` is a simple Markov chain generator. It learns the probabilities of a token A
-following a token B and then builds a chain of tokens based on those probabilities.
-
-### Madlib
-`Madlib` is a model similar to a [context-free grammar](http://www.rednoise.org/pdal/index.php?n=Main.Grammars).
-It learns part-of-speech patterns and builds a vocabulary from a set of documents. Then
-it just randomly swaps in new words in according to their part-of-speech.
-
 
 ## Usage
-The models share a very simple common interface:
 
-    # Train the model on some documents:
-    model.train(docs)
+You can use `broca`'s module conventionally, or you can take advantage of its pipelines:
 
-    # Generate some speech with the model:
-    model.speak()
+    from broca.pipeline import Pipeline
+    from broca.preprocess import Cleaner, HTMLCleaner
+    from broca.vectorize import BoW, DCS
 
-Each model has a few of its own configuration options. There's not much code so you can
-refer to the inline documentation for more info on those options.
+    p = Pipeline(
+            HTMLCleaner(),
+            Cleaner(),
+            BoW()
+        )
+
+    vecs = p(docs)
+
+Pipelines allow you to chain `broca`'s objects and easily swap them out.
+
+You can also build multi-pipelines to try out a variety of pipelines simultaneously:
+
+    p = Pipeline(
+            HTMLCleaner(),
+            Cleaner(),
+            [BoW(), DCS()]
+        )
+
+    vecs1, vecs2 = p(docs)
+
+Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components are compatible.
 
 
 ## Examples
-These examples run off a sample (n=10000) from a dataset of all the plot descriptions of IMDB.
 
-    # Madlib
-    python examples/madlib.py
-
-    # Markov
-    python examples/markov.py
-
-The `Madlib` example takes awhile to train :\
+You can get a sense of the keyword extractor quality by running the `examples/keywords.py` script.
 
 
 ## Tests
 
-You can get a sense of the keyword extractor quality by running the `examples/keywords.py` script.
-
 Unit tests can be run using `nose`:
 
     $ nosetests tests
-
-## Contributing
-If you have your own text generation approach or have a model that's missing from here,
-it would be great if you could share it! The only two requirements for contribution are
-keeping the model API consistent (with `train` and `speak` methods) and then an example
-to go in the `examples/` folder.

@@ -83,6 +83,23 @@ vecs1, vecs2 = p(docs)
 
 Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components are compatible.
 
+### Implementing a pipe
+
+Implementing your own pipeline component is easy. Just define a class and define its `__call__` method and `input` and `output` class attributes, which should be `PipeType`s:
+
+```python
+from broca.pipeline import PipeType
+
+class MyPipe():
+    input = PipeType.docs
+    output = PipeType.vecs
+
+    def __call__(self, docs):
+        # do something with docs to get vectors
+        vecs = make_vecs_func(docs)
+        return vecs
+```
+
 
 ## Examples
 

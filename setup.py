@@ -7,7 +7,7 @@ REQUIREMENTS = open(REQUIREMENTS, 'r').read().splitlines()
 setup(
     name='broca',
     version='0.2.0',
-    description='off-the-shelf nlp tools',
+    description='rapid nlp prototyping',
     url='https://github.com/ftzeng/broca',
     author='Francis Tseng',
     author_email='f@frnsys.com',

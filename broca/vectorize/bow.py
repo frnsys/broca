@@ -2,7 +2,7 @@
 For manipulating text.
 """
 
-from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer, HashingVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Normalizer
 from broca.vectorize import Vectorizer
@@ -10,7 +10,7 @@ from broca.tokenize import Lemma
 
 
 class BoW(Vectorizer):
-    def __init__(self, min_df=0.015, max_df=0.9, tokenizer=Lemma):
+    def __init__(self, min_df=0.015, max_df=0.9, tokenizer=Lemma, hash=False):
         """
         `min_df` is set to filter out extremely rare words,
         since we don't want those to dominate the distance metric.
@@ -25,8 +25,13 @@ class BoW(Vectorizer):
             def __call__(self, doc):
                 return t.tokenize([doc])[0]
 
+        if hash:
+            vectr = HashingVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=Tokenizer())
+        else:
+            vectr = CountVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=Tokenizer(), min_df=min_df, max_df=max_df)
+
         args = [
-            ('vectorizer', CountVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=Tokenizer(), min_df=min_df, max_df=max_df)),
+            ('vectorizer', vectr),
             ('tfidf', TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)),
             ('normalizer', Normalizer(copy=False))
         ]

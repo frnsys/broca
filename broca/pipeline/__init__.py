@@ -8,13 +8,20 @@ class Pipeline():
         self.refresh = kwargs.get('refresh', False)
         self.cryo = Cryo(refresh=self.refresh)
 
-        # If any of the pipes is a list, we are building multiple pipelines
-        if any(isinstance(p, list) for p in pipes):
+        # If any of the pipes is a list or a multi-pipeline, we are building multiple pipelines
+        if any(isinstance(p, list) or self._is_multi(p) for p in pipes):
             # Coerce all pipes to lists
-            pipes = [p if isinstance(p, list) else [p] for p in pipes]
+            c_pipes = []
+            for p in pipes:
+                if isinstance(p, list):
+                    c_pipes.append(p)
+                elif self._is_multi(p):
+                    c_pipes.append(p.pipelines)
+                else:
+                    c_pipes.append([p])
 
             # Build each pipeline
-            self.pipelines = [Pipeline(*pipes_) for pipes_ in product(*pipes)]
+            self.pipelines = [Pipeline(*pipes_) for pipes_ in product(*c_pipes)]
 
         else:
             self.pipes = pipes
@@ -26,6 +33,13 @@ class Pipeline():
                         type(p_out).__name__, p_out.output,
                         type(p_in).__name__, p_in.input
                     ))
+
+            # So pipelines can be nested
+            self.input = self.pipes[0].input
+            self.output = self.pipes[-1].output
+
+    def _is_multi(self, pipe):
+        return isinstance(pipe, Pipeline) and hasattr(pipe, 'pipelines')
 
     def __call__(self, input):
         if hasattr(self, 'pipelines'):

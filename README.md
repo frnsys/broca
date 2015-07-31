@@ -81,6 +81,22 @@ p = Pipeline(
 vecs1, vecs2 = p(docs)
 ```
 
+You can also nest pipelines and multi-pipelines:
+
+```python
+clean = Pipeline(
+            HTMLCleaner(),
+            Cleaner(),
+        )
+
+vectr_pipeline = Pipeline(
+    clean,
+    [BoW(), DCS()]
+)
+
+vecs1, vecs2 = p(docs)
+```
+
 Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components ("pipes") are compatible.
 
 ### Freezing pipes

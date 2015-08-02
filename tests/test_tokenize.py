@@ -26,8 +26,7 @@ class KeywordTokenizeTests(unittest.TestCase):
 
         # Order not necessarily preserved
         for i, output in enumerate(t_docs):
-            for o, e in zip(output, expected_t_docs[i]):
-                self.assertEqual(set(o), set(e))
+            self.assertEqual(set(output), set(expected_t_docs[i]))
 
     def test_apriori(self):
         expected_t_docs = [

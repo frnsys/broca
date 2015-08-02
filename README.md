@@ -145,6 +145,8 @@ class MyPipe(Pipe):
         return vecs
 ```
 
+You can use anything for your input and output pipe types, e.g. `Pipe.type.foo` or `Pipe.type.hello_there`. They are dynamically generated as needed.
+
 
 ## Examples
 

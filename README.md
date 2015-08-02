@@ -145,6 +145,8 @@ class MyPipe(Pipe):
         return vecs
 ```
 
+The default `__init__` method saves the initialization `args` in `self.args` and `kwargs` as properties by their key names, so you won't need to implement `__init__` if you only need it to pass arguments to `__call__`.
+
 You can use anything for your input and output pipe types, e.g. `Pipe.type.foo` or `Pipe.type.hello_there`. They are dynamically generated as needed.
 
 

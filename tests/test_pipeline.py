@@ -1,5 +1,5 @@
 import unittest
-from broca.pipeline import Pipeline
+from broca.pipeline import Pipe, Pipeline
 from broca.preprocess import Cleaner, HTMLCleaner
 from broca.tokenize.keyword import Overkill, RAKE
 
@@ -96,3 +96,8 @@ class PipelineTests(unittest.TestCase):
         )
         output3 = pipeline(self.docs)
         self.assertNotEqual(output1, output3)
+
+    def test_dynamic_pipe_types(self):
+        self.assertEqual(Pipe.type.foo, Pipe.type.foo)
+        self.assertEqual(Pipe.type.bar, Pipe.type.bar)
+        self.assertNotEqual(Pipe.type.foo, Pipe.type.bar)

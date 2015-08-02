@@ -57,13 +57,23 @@ class Pipeline():
             return ' -> '.join([str(p) for p in self.pipes])
 
 
-class PipeType():
-    tokens = 'tokens'
-    assetid_doc = 'assetid_doc' # type == dict,  {asset_id : body_text }
-    assetid_vec = 'assetid_vec' # type == dict,  {asset_id : vec }
-    docs = 'docs'
-    vecs = 'vecs'
-    sim_mat = 'sim_mat'
+class _PipeType(type):
+    _types = {
+        'docs': 0,
+        'tokens': 1,
+        'vecs': 2,
+        'sim_mat': 3,
+        'assetid_doc': 4, # type == dict,  {asset_id : body_text }
+        'assetid_vec': 5 # type == dict,  {asset_id : vec }
+    }
+
+    def __getattr__(cls, name):
+        if name not in cls._types:
+            cls._types[name] = len(cls._types)
+        return cls._types[name]
+
+class PipeType(metaclass=_PipeType):
+    pass
 
 
 class Pipe():

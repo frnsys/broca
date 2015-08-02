@@ -1,5 +1,5 @@
 import unittest
-from broca.pipeline import Pipe, Pipeline
+from broca import Pipe, Pipeline
 from broca.preprocess import Cleaner, HTMLCleaner
 from broca.tokenize.keyword import Overkill, RAKE
 

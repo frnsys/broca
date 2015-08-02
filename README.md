@@ -54,7 +54,7 @@ You also need to install the `spacy` library's data:
 You can use `broca`'s module conventionally, or you can take advantage of its pipelines:
 
 ```python
-from broca.pipeline import Pipeline
+from broca import Pipeline
 from broca.preprocess import Cleaner, HTMLCleaner
 from broca.vectorize import BoW, DCS
 
@@ -130,7 +130,7 @@ Implementing your own pipeline component is easy. Just define a class which inhe
 The call method must take only two arguments: `self` and then the input from the preceding pipe. If there are parameters to be specified, they should be handled in the pipe's `__init__` method.
 
 ```python
-from broca.pipeline import Pipe
+from broca import Pipe
 
 class MyPipe(Pipe):
     input = Pipe.type.docs

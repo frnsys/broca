@@ -85,7 +85,7 @@ p = Pipeline(
 vecs1, vecs2 = p(docs)
 ```
 
-This results in two pipelines:
+This results in two pipelines which are run simultaneously when `p(docs)` is executed:
 
 - `HTMLCleaner() -> Cleaner() -> BoW()`
 - `HTMLCleaner() -> Cleaner() -> DCS()`
@@ -156,7 +156,7 @@ branching_pipeline = Pipeline(
         E()             # Reduced
 )
 
-p([1,2,3,4])
+branching_pipeline([1,2,3,4])
 # [24,27,30,33]
 ```
 

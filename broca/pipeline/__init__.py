@@ -43,7 +43,7 @@ class Pipeline():
 
     def __call__(self, input):
         if hasattr(self, 'pipelines'):
-            return [p(input) for p in self.pipelines]
+            return tuple(p(input) for p in self.pipelines)
         else:
             for pipe in self.pipes:
                 output = self.cryo(pipe, input) if self.freeze else pipe(input)

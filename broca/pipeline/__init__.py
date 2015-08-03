@@ -1,5 +1,6 @@
 from itertools import product
 from broca.pipeline.cryo import Cryo
+from broca.pipeline.pipe import PipeType
 
 
 class Pipeline():
@@ -45,8 +46,11 @@ class Pipeline():
 
                 if output != input:
                     raise Exception('Incompatible: pipe <{}> outputs <{}>, pipe <{}> requires input of <{}>.'.format(
-                        type(p_out).__name__, output,
-                        type(p_in).__name__, input
+                        # Hmm this could be cleaner...
+                        type(p_out).__name__ if not isinstance(p_out, tuple) else tuple(type(p).__name__ for p in p_out),
+                        output.name if isinstance(output, PipeType) else tuple(t.name for t in output),
+                        type(p_in).__name__ if not isinstance(p_in, tuple) else tuple(type(p).__name__ for p in p_in),
+                        input.name if isinstance(input, PipeType) else tuple(t.name for t in input)
                     ))
 
             # So pipelines can be nested
@@ -85,47 +89,3 @@ class Pipeline():
             return 'MultiPipeline: {}'.format(' || '.join([str(p) for p in self.pipelines]))
         else:
             return ' -> '.join([str(p) for p in self.pipes])
-
-
-class _PipeType(type):
-    _types = {}
-
-    def __getattr__(cls, name):
-        if name not in cls._types:
-            cls._types[name] = len(cls._types)
-        return cls._types[name]
-
-
-class PipeType(metaclass=_PipeType):
-    pass
-
-
-class Pipe():
-    input = None
-    output = None
-    type = PipeType
-
-    def __new__(cls, *args, **kwargs):
-        obj = super().__new__(cls)
-        obj.args = args
-        obj.kwargs = kwargs
-
-        # Build Pipe's signature
-        args = ', '.join([ags for ags in [
-            ', '.join(map(str, args)),
-            ', '.join(['{}={}'.format(x, y) for x, y in kwargs.items()])
-        ] if ags])
-        obj.sig = '{}({})'.format(
-            cls.__name__,
-            args
-        )
-
-        return obj
-
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def __repr__(self):
-        return self.sig

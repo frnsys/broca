@@ -1,4 +1,4 @@
-from broca.pipeline import Pipe
+from broca import Pipe
 
 
 class PreProcessor(Pipe):
@@ -12,5 +12,5 @@ class PreProcessor(Pipe):
         raise NotImplementedError
 
 
-from .clean import Cleaner
+from .clean import BasicCleaner
 from .html import HTMLCleaner

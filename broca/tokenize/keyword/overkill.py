@@ -4,11 +4,11 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from broca.tokenize import Tokenizer
 from broca.tokenize.util import prune
 from broca.common.util import gram_size, penn_to_wordnet
-from broca.tokenize.keyword.rake import RAKE
+from broca.tokenize.keyword.rake import RAKETokenizer
 from broca.common.shared import spacy
 
 
-class Overkill(Tokenizer):
+class OverkillTokenizer(Tokenizer):
     def __init__(self, prune=True, lemmatize=True):
         self.prune = prune
         self.lemmatize = lemmatize
@@ -17,7 +17,7 @@ class Overkill(Tokenizer):
         if self.lemmatize:
             lem = WordNetLemmatizer()
 
-        pre_tdocs = RAKE().tokenize(docs)
+        pre_tdocs = RAKETokenizer().tokenize(docs)
 
         tdocs = []
         for i, tdoc in enumerate(pre_tdocs):

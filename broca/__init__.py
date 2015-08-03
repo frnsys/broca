@@ -1,1 +1,2 @@
-from .pipeline import Pipe, Pipeline
+from .pipeline import Pipeline
+from .pipeline.pipe import Pipe, IdentityPipe

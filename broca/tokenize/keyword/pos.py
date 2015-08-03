@@ -20,7 +20,7 @@ CFG = {
 }
 
 
-class POS(Tokenizer):
+class POSTokenizer(Tokenizer):
     def tokenize(self, docs):
         tags = ['NN', 'NNS', 'NNP', 'NNPS']
 

@@ -1,6 +1,8 @@
 import unittest
+from broca import Pipe, Pipeline, IdentityPipe
 from broca.similarity import doc as doc_sim
 from broca.similarity import term as term_sim
+from broca.tokenize.keyword import RAKETokenizer
 
 
 class DocSimilarityTests(unittest.TestCase):
@@ -19,8 +21,11 @@ class DocSimilarityTests(unittest.TestCase):
     def test_wikipedia(self):
         # TO DO not sure if this is implemented correctly; not getting 1. sim
         # for identical documents...
-        m = doc_sim.WikipediaSimilarity()
-        sims = m.sim_mat(self.docs)
+        p = Pipeline(
+            (IdentityPipe(Pipe.type.docs), RAKETokenizer()),
+            doc_sim.WikipediaSimilarity()
+        )
+        sims = p(self.docs)
         self.assertEqual(sims.shape, (3,3))
 
 

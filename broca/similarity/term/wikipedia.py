@@ -1,7 +1,7 @@
 from scipy.spatial.distance import pdist, squareform
 from broca.similarity.term import TermSimilarity
 from broca.knowledge.wikipedia import Wikipedia
-from broca.vectorize.bow import BoW
+from broca.vectorize.bow import BoWVectorizer
 
 
 class WikipediaSimilarity(Wikipedia, TermSimilarity):
@@ -19,7 +19,7 @@ class WikipediaSimilarity(Wikipedia, TermSimilarity):
 
         # Fetch wikipages, compute cosine similarity matrix
         docs = [self.fetch_wikipage(t) for t in terms]
-        vectr = BoW()
+        vectr = BoWVectorizer()
         vecs = vectr.vectorize(docs)
         dist_mat = pdist(vecs.todense(), metric='cosine')
         dist_mat = squareform(dist_mat)

@@ -5,7 +5,7 @@ from broca.common.shared import spacy
 from broca.common.util import penn_to_wordnet
 
 
-class Lemma(Tokenizer):
+class LemmaTokenizer(Tokenizer):
     """
     Lemmatizing tokenizer.
     """

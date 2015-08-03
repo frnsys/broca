@@ -1,5 +1,5 @@
 import unittest
-from broca.preprocess import Cleaner, HTMLCleaner
+from broca.preprocess import BasicCleaner, HTMLCleaner
 
 
 class PreProcessTests(unittest.TestCase):
@@ -11,7 +11,7 @@ class PreProcessTests(unittest.TestCase):
         goats are like mushrooms if you shoot a duck im scared of toasters my site are
         '''
 
-        doc = Cleaner().preprocess([doc])[0]
+        doc = BasicCleaner().preprocess([doc])[0]
         self.assertEqual(doc, expected_doc.strip())
 
     def test_html_clean(self):

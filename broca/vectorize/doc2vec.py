@@ -17,7 +17,7 @@ import string
 from vectorize import Vectorizer
 
 
-class Doc2Vec_Wrapper(Vectorizer):
+class Doc2VecVectorizer(Vectorizer):
 
     input = Pipe.type.assetid_docs
     output = Pipe.type.assetid_vecs

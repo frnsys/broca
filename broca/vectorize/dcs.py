@@ -53,7 +53,7 @@ from broca.common.shared import spacy
 stops = stopwords.words('english')
 
 
-class DCS(Vectorizer):
+class DCSVectorizer(Vectorizer):
     def __init__(self, alpha=1.5, relation_weights=[0.8, 0.5, 0.3], n_chains=10):
         self.alpha = 1.5
         self.relation_weights = relation_weights

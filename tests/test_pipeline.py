@@ -1,7 +1,7 @@
 import unittest
 from broca import Pipe, Pipeline
-from broca.preprocess import Cleaner, HTMLCleaner
-from broca.tokenize.keyword import Overkill, RAKE
+from broca.preprocess import BasicCleaner, HTMLCleaner
+from broca.tokenize.keyword import OverkillTokenizer, RAKETokenizer
 
 
 class PipelineTests(unittest.TestCase):
@@ -16,18 +16,18 @@ class PipelineTests(unittest.TestCase):
             ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
             ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
         ]
-        pipeline = Pipeline(Cleaner(), Overkill())
+        pipeline = Pipeline(BasicCleaner(), OverkillTokenizer())
         output = pipeline(self.docs)
         for o, e in zip(output, expected):
             self.assertEqual(set(o), set(e))
 
     def test_incompatible_pipeline(self):
-        self.assertRaises(Exception, Pipeline, Overkill(), Cleaner())
+        self.assertRaises(Exception, Pipeline, OverkillTokenizer(), BasicCleaner())
 
     def test_multi_pipeline(self):
         pipeline = Pipeline(
-            Cleaner(),
-            [Overkill(), RAKE()]
+            BasicCleaner(),
+            [OverkillTokenizer(), RAKETokenizer()]
         )
         expected = [
             [
@@ -50,8 +50,8 @@ class PipelineTests(unittest.TestCase):
             ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
             ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
         ]
-        nested_pipeline = Pipeline(HTMLCleaner(), Cleaner())
-        pipeline = Pipeline(nested_pipeline, Overkill())
+        nested_pipeline = Pipeline(HTMLCleaner(), BasicCleaner())
+        pipeline = Pipeline(nested_pipeline, OverkillTokenizer())
         output = pipeline(docs)
         for o, e in zip(output, expected):
             self.assertEqual(set(o), set(e))
@@ -69,8 +69,8 @@ class PipelineTests(unittest.TestCase):
             ]
         ]
         nested_multipipeline = Pipeline(
-            Cleaner(),
-            [Overkill(), RAKE()]
+            BasicCleaner(),
+            [OverkillTokenizer(), RAKETokenizer()]
         )
         pipeline = Pipeline(HTMLCleaner(), nested_multipipeline)
         outputs = pipeline(docs)
@@ -80,19 +80,19 @@ class PipelineTests(unittest.TestCase):
 
     def test_cryo_diff_pipe_init(self):
         pipeline = Pipeline(
-            Cleaner(),
+            BasicCleaner(),
         )
         output1 = pipeline(self.docs)
 
         pipeline = Pipeline(
-            Cleaner(),
+            BasicCleaner(),
         )
         output2 = pipeline(self.docs)
         self.assertEqual(output1, output2)
 
         # Make sure cryo picks up on differently initialized classes
         pipeline = Pipeline(
-            Cleaner(lowercase=False),
+            BasicCleaner(lowercase=False),
         )
         output3 = pipeline(self.docs)
         self.assertNotEqual(output1, output3)

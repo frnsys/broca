@@ -1,4 +1,4 @@
-from broca.pipeline import Pipe
+from broca import Pipe
 
 
 class Tokenizer(Pipe):
@@ -12,4 +12,4 @@ class Tokenizer(Pipe):
         raise NotImplementedError
 
 
-from .lemma import Lemma
+from .lemma import LemmaTokenizer

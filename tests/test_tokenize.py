@@ -1,5 +1,5 @@
 import unittest
-from broca.tokenize import keyword, util, Lemma
+from broca.tokenize import keyword, util, LemmaTokenizer
 
 
 class KeywordTokenizeTests(unittest.TestCase):
@@ -14,7 +14,7 @@ class KeywordTokenizeTests(unittest.TestCase):
             ['run', 'happy', 'cat dog'],
             ['run', 'sad', 'cat dog']
         ]
-        t_docs = keyword.Overkill(prune=True, lemmatize=True).tokenize(self.docs)
+        t_docs = keyword.OverkillTokenizer(prune=True, lemmatize=True).tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
 
     def test_rake(self):
@@ -22,7 +22,7 @@ class KeywordTokenizeTests(unittest.TestCase):
             ['cat dog', 'running happy'],
             ['cat dog runs sad']
         ]
-        t_docs = keyword.RAKE().tokenize(self.docs)
+        t_docs = keyword.RAKETokenizer().tokenize(self.docs)
 
         # Order not necessarily preserved
         for i, output in enumerate(t_docs):
@@ -33,7 +33,7 @@ class KeywordTokenizeTests(unittest.TestCase):
             ['cat dog'],
             ['cat dog']
         ]
-        t_docs = keyword.Apriori().tokenize(self.docs)
+        t_docs = keyword.AprioriTokenizer().tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
 
     def test_pos(self):
@@ -41,7 +41,7 @@ class KeywordTokenizeTests(unittest.TestCase):
             ['cat dog'],
             ['cat dog']
         ]
-        t_docs = keyword.POS().tokenize(self.docs)
+        t_docs = keyword.POSTokenizer().tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
 
 
@@ -57,7 +57,7 @@ class TokenizeTests(unittest.TestCase):
             ['cat', 'dog', 'run', 'happy', '.'],
             ['cat', 'dog', 'run', 'sad', '.']
         ]
-        t_docs = Lemma().tokenize(self.docs)
+        t_docs = LemmaTokenizer().tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
 
     def test_prune(self):

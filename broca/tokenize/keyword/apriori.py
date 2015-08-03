@@ -9,12 +9,12 @@ See <https://en.wikipedia.org/wiki/Apriori_algorithm>
 
 from itertools import combinations
 from collections import defaultdict
-from broca.tokenize.keyword import POS
+from broca.tokenize.keyword import POSTokenizer
 from broca.tokenize.util import prune
 from broca.tokenize import Tokenizer
 
 
-class Apriori(Tokenizer):
+class AprioriTokenizer(Tokenizer):
     def __init__(self, min_sup=0.5):
         self.min_sup = min_sup
 
@@ -42,7 +42,7 @@ class Apriori(Tokenizer):
         transactions = []
 
         # Use nouns and noun phrases.
-        for doc in POS().tokenize(docs):
+        for doc in POSTokenizer().tokenize(docs):
             transaction = set(doc)
             candidates = candidates.union({(t,) for t in transaction})
             transactions.append(transaction)

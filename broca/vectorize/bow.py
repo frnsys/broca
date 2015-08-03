@@ -6,11 +6,11 @@ from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer, H
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Normalizer
 from broca.vectorize import Vectorizer
-from broca.tokenize import Lemma
+from broca.tokenize import LemmaTokenizer
 
 
-class BoW(Vectorizer):
-    def __init__(self, min_df=0.015, max_df=0.9, tokenizer=Lemma, hash=False):
+class BoWVectorizer(Vectorizer):
+    def __init__(self, min_df=0.015, max_df=0.9, tokenizer=LemmaTokenizer, hash=False):
         """
         `min_df` is set to filter out extremely rare words,
         since we don't want those to dominate the distance metric.

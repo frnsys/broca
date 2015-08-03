@@ -24,7 +24,7 @@ stops_path = os.path.join(os.path.dirname(__file__),
                 '../../data/SmartStoplist.txt')
 
 
-class RAKE(Tokenizer):
+class RAKETokenizer(Tokenizer):
     def tokenize(self, docs):
         stops = stopwords.words('english')
         r = Rake(stops_path)

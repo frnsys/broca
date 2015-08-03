@@ -12,7 +12,7 @@ punct_map = {ord(p): '' for p in punct}
 url_re = re.compile(r'https?:\/\/.*[\r\n]*', flags=re.MULTILINE)
 
 
-class Cleaner(PreProcessor):
+class BasicCleaner(PreProcessor):
     def __init__(self, remove_urls=True, lowercase=True, remove_possessors=True, remove_punctuation=True):
         self.remove_urls = remove_urls
         self.lowercase = lowercase

@@ -2,7 +2,7 @@ import math
 from collections import defaultdict
 
 
-def idf(t_docs, normalize=False):
+def compute_idf(t_docs, normalize=False):
     N = len(t_docs)
     iidf = defaultdict(int)
     for terms in t_docs:

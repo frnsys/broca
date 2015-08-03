@@ -2,7 +2,7 @@
 Vectorize classes provide vector representations
 for a list of documents.
 """
-from broca.pipeline import Pipe
+from broca import Pipe
 
 
 class Vectorizer(Pipe):
@@ -33,5 +33,5 @@ class Vectorizer(Pipe):
         return self.vectorize(docs)
 
 
-from .bow import BoW
-from .dcs import DCS
+from .bow import BoWVectorizer
+from .dcs import DCSVectorizer

@@ -7,23 +7,42 @@ As described in:
 """
 
 import numpy as np
+from broca import Pipe
 from scipy.spatial.distance import cdist
 from broca.common.util import build_sim_mat
 from broca.similarity.doc import DocSimilarity
 from broca.knowledge.wikipedia import Wikipedia
-from broca.tokenize.keyword import RAKE
-from broca.vectorize.bow import BoW
+from broca.vectorize.bow import BoWVectorizer
 
 
-class WikipediaSimilarity(Wikipedia, DocSimilarity):
-    def __init__(self, tokenizer=RAKE, vectorizer=BoW, wiki_conn=None):
+class WikipediaSimilarity(Pipe, Wikipedia, DocSimilarity):
+    input = (Pipe.type.docs, Pipe.type.tokens)
+    output = Pipe.type.sim_mat
+
+    def __init__(self, vectorizer=BoWVectorizer, wiki_conn=None):
         super().__init__(wiki_conn=wiki_conn)
         self.vectorizer = vectorizer
-        self.tokenizer = tokenizer
 
-    def sim_mat(self, docs):
-        tdocs = self.tokenizer().tokenize(docs)
-        all_terms = set([t for toks in tdocs for t in toks])
+    def sim_mat(self, docs, token_docs):
+        return self(docs, token_docs)
+
+    def compute_bridge_similarity(self, vec1, vec2):
+        EWP = 1 - np.multiply(vec1, vec2)
+
+        # not sure exactly how to sort the EWP vector
+        #EWP = sorted(EWP, reverse=True)
+        EWP = sorted(EWP, reverse=True)
+
+        k = 10
+        EWP = EWP[:k]
+
+        # The paper does not mention using logs but start to get into underflow
+        # issues multiplying so many decimal values
+        lEWP = -1 * np.log(EWP)
+        return 1/np.sum(lEWP)
+
+    def __call__(self, docs, token_docs):
+        all_terms = set([t for toks in token_docs for t in toks])
         bg_docs = [self.fetch_wikipage(t) for t in all_terms]
 
         # Filter out empty docs (will mess up cosine similarity)
@@ -42,18 +61,3 @@ class WikipediaSimilarity(Wikipedia, DocSimilarity):
         doc_vecs = cdist(doc_vecs, bg_vecs, metric='cosine')
 
         return build_sim_mat(doc_vecs, self.compute_bridge_similarity)
-
-    def compute_bridge_similarity(self, vec1, vec2):
-        EWP = 1 - np.multiply(vec1, vec2)
-
-        # not sure exactly how to sort the EWP vector
-        #EWP = sorted(EWP, reverse=True)
-        EWP = sorted(EWP, reverse=True)
-
-        k = 10
-        EWP = EWP[:k]
-
-        # The paper does not mention using logs but start to get into underflow
-        # issues multiplying so many decimal values
-        lEWP = -1 * np.log(EWP)
-        return 1/np.sum(lEWP)

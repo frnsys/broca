@@ -3,7 +3,7 @@
 
 There is some Python 2 support scattered throughout but the library has not been fully tested against it.
 
-**This library is in development -- APIs may change.**
+**This library is in development -- APIs may change and features may be unstable.**
 
 
 ## Overview
@@ -55,13 +55,13 @@ You can use `broca`'s module conventionally, or you can take advantage of its pi
 
 ```python
 from broca import Pipeline
-from broca.preprocess import Cleaner, HTMLCleaner
-from broca.vectorize import BoW, DCS
+from broca.preprocess import BasicCleaner, HTMLCleaner
+from broca.vectorize import BoWVectorizer, DCSVectorizer
 
 p = Pipeline(
         HTMLCleaner(),
-        Cleaner(),
-        BoW()
+        BasicCleaner(),
+        BoWVectorizer()
     )
 
 vecs = p(docs)
@@ -78,8 +78,8 @@ You can also build multi-pipelines to try out a variety of pipelines simultaneou
 ```python
 p = Pipeline(
         HTMLCleaner(),
-        Cleaner(),
-        [BoW(), DCS()]
+        BasicCleaner(),
+        [BoWVectorizer(), DCSVectorizer()]
     )
 
 vecs1, vecs2 = p(docs)
@@ -87,8 +87,8 @@ vecs1, vecs2 = p(docs)
 
 This results in two pipelines which are run simultaneously when `p(docs)` is executed:
 
-- `HTMLCleaner() -> Cleaner() -> BoW()`
-- `HTMLCleaner() -> Cleaner() -> DCS()`
+- `HTMLCleaner() -> BasicCleaner() -> BoWVectorizer()`
+- `HTMLCleaner() -> BasicCleaner() -> DCSVectorizer()`
 
 ### Nesting pipelines
 
@@ -97,12 +97,12 @@ You can also nest pipelines and multi-pipelines:
 ```python
 clean = Pipeline(
             HTMLCleaner(),
-            Cleaner(),
+            BasicCleaner(),
         )
 
 vectr_pipeline = Pipeline(
     clean,
-    [BoW(), DCS()]
+    [BoWVectorizer(), DCSVectorizer()]
 )
 
 vecs1, vecs2 = p(docs)
@@ -183,7 +183,7 @@ You can disable this behavior for a pipeline by specifying `freeze=False`:
 ```python
 p = Pipeline(
         HTMLCleaner(),
-        Cleaner(),
+        BasicCleaner(),
         freeze=False
     )
 ```
@@ -193,7 +193,7 @@ You can force the recomputation of an entire pipeline by specifying `refresh=Tru
 ```python
 p = Pipeline(
         HTMLCleaner(),
-        Cleaner(),
+        BasicCleaner(),
         refresh=True
     )
 ```
@@ -223,6 +223,28 @@ class MyPipe(Pipe):
 The default `__init__` method saves the initialization `args` in `self.args` and `kwargs` as properties by their key names, so you won't need to implement `__init__` if you only need it to pass arguments to `__call__`.
 
 You can use anything for your input and output pipe types, e.g. `Pipe.type.foo` or `Pipe.type.hello_there`. They are dynamically generated as needed.
+
+### The Identity Pipe
+
+Sometimes you need a pipe to pass along input unmodified.
+
+For example, the `WikipediaSimilarity` pipe takes in as input `(Pipe.type.docs, Pipe.type.tokens)`. You want to pass docs and tokenized versions of those docs.
+
+This can be accomplished with branching and the `IdentityPipe`, which requires you specify the input pipe type:
+
+```python
+
+docs = [
+    'I am a cat',
+    'I have a lion'
+]
+
+p = Pipeline(
+    (IdentityPipe(Pipe.type.docs), OverkillTokenizer()),
+    WikipediaSimilarity()
+)
+
+```
 
 
 ## Examples

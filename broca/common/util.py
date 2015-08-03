@@ -1,5 +1,4 @@
 import numpy as np
-from broca.common.shared import spacy
 
 
 def penn_to_wordnet(tag):
@@ -40,3 +39,18 @@ def build_sim_mat(items, sim_func):
 
     # Construct the full sim mat from the lower triangle
     return sim_mat + sim_mat.T - np.diag(sim_mat.diagonal())
+
+
+def sim_to_dist(sim_mat):
+    """
+    Convert a similarity matrix to a distance matrix.
+    """
+    return np.sqrt(1-sim_mat/np.max(sim_mat))
+
+
+def dist_to_sim(dist_mat):
+    """
+    Approximately convert a distance matrix to a similarity matrix.
+    """
+    return 1-np.square(dist_mat/np.max(dist_mat))
+

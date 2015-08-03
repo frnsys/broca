@@ -29,7 +29,7 @@ def estimate_eps(dist_mat, n_closest=5):
         eps_candidate, _, jump = max(difs, key=lambda x: x[2])
 
         estimates.append(eps_candidate)
-        return sorted(estimates)
+    return sorted(estimates)
 
 
 def estimate_k(X, max_k):

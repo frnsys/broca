@@ -28,15 +28,32 @@ class Pipeline():
 
             # Validate the pipeline
             for p_out, p_in in zip(pipes, pipes[1:]):
-                if p_out.output != p_in.input:
+                if isinstance(p_out, tuple):
+                    output = tuple(p.output for p in p_out)
+                else:
+                    output = p_out.output
+
+                if isinstance(p_in, tuple):
+                    input = tuple(p.input for p in p_in)
+
+                    # If the output is not a tuple,
+                    # we are replicating it across each branch (one-to-branch)
+                    if not isinstance(output, tuple):
+                        output = tuple(output for i in input)
+                else:
+                    input = p_in.input
+
+                if output != input:
                     raise Exception('Incompatible: pipe <{}> outputs <{}>, pipe <{}> requires input of <{}>.'.format(
-                        type(p_out).__name__, p_out.output,
-                        type(p_in).__name__, p_in.input
+                        type(p_out).__name__, output,
+                        type(p_in).__name__, input
                     ))
 
             # So pipelines can be nested
-            self.input = self.pipes[0].input
-            self.output = self.pipes[-1].output
+            first = self.pipes[0]
+            last = self.pipes[-1]
+            self.input = first.input if not isinstance(first, tuple) else tuple(p.input for p in first)
+            self.output = last.input if not isinstance(last, tuple) else tuple(p.input for p in last)
 
     def _is_multi(self, pipe):
         return isinstance(pipe, Pipeline) and hasattr(pipe, 'pipelines')
@@ -46,7 +63,20 @@ class Pipeline():
             return tuple(p(input) for p in self.pipelines)
         else:
             for pipe in self.pipes:
-                output = self.cryo(pipe, input) if self.freeze else pipe(input)
+                # Branch
+                if isinstance(pipe, tuple):
+                    # Multi-to-branch/branch-to-branch
+                    if isinstance(input, tuple):
+                        output = tuple(self.cryo(p, i) if self.freeze else p(i) for p, i in zip(pipe, input))
+
+                    # One-to-branch
+                    else:
+                        output = tuple(self.cryo(p, input) if self.freeze else p(input) for p in pipe)
+                else:
+                    if isinstance(input, tuple):
+                        output = self.cryo(pipe, *input) if self.freeze else pipe(*input)
+                    else:
+                        output = self.cryo(pipe, input) if self.freeze else pipe(input)
                 input = output
             return output
 
@@ -58,19 +88,13 @@ class Pipeline():
 
 
 class _PipeType(type):
-    _types = {
-        'docs': 0,
-        'tokens': 1,
-        'vecs': 2,
-        'sim_mat': 3,
-        'assetid_doc': 4, # type == dict,  {asset_id : body_text }
-        'assetid_vec': 5 # type == dict,  {asset_id : vec }
-    }
+    _types = {}
 
     def __getattr__(cls, name):
         if name not in cls._types:
             cls._types[name] = len(cls._types)
         return cls._types[name]
+
 
 class PipeType(metaclass=_PipeType):
     pass

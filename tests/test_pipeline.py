@@ -101,3 +101,309 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(Pipe.type.foo, Pipe.type.foo)
         self.assertEqual(Pipe.type.bar, Pipe.type.bar)
         self.assertNotEqual(Pipe.type.foo, Pipe.type.bar)
+
+    def test_valid_branching_pipeline_multiout_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            output = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+
+        class B(Pipe):
+            input = Pipe.type.b
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.c
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.d
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.d_out)
+            output = Pipe.type.e
+
+        try:
+            Pipeline(
+                A(),
+                (B(), C(), D()),
+                E()
+            )
+        except Exception:
+            self.fail('Valid pipeline raised exception')
+
+    def test_invalid_branching_pipeline_multiout_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A outputs tuples
+            output = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+
+        class B(Pipe):
+            input = Pipe.type.b
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.c
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.d
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.d_out)
+            output = Pipe.type.e
+
+        # Wrong branch size
+        self.assertRaises(Exception, Pipeline, A(), (B(), C()), E())
+
+        # Wrong branch order
+        self.assertRaises(Exception, Pipeline, A(), (C(), B(), D()), E())
+
+        # Wrong input type
+        class D_(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.d_out
+
+        self.assertRaises(Exception, Pipeline, A(), (B(), C(), D_()), E())
+
+        # Wrong output size
+        class A_(Pipe):
+            input = Pipe.type.a
+            output = (Pipe.type.b, Pipe.type.c)
+
+        self.assertRaises(Exception, Pipeline, A_(), (B(), C(), D()), E())
+
+        # Wrong output types
+        class A_(Pipe):
+            input = Pipe.type.a
+            output = (Pipe.type.b, Pipe.type.c, Pipe.type.y)
+
+        self.assertRaises(Exception, Pipeline, A_(), (B(), C(), D()), E())
+
+    def test_valid_branching_pipeline_branches_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A outputs tuples
+            output = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+
+        class B(Pipe):
+            input = Pipe.type.b
+            output = Pipe.type.b
+
+        class C(Pipe):
+            input = Pipe.type.c
+            output = Pipe.type.c
+
+        class D(Pipe):
+            input = Pipe.type.d
+            output = Pipe.type.d
+
+        class E(Pipe):
+            input = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+            output = Pipe.type.e
+
+        try:
+            Pipeline(
+                A(),
+                (B(), C(), D()),
+                (B(), C(), D()),
+                E()
+            )
+        except Exception:
+            self.fail('Valid pipeline raised exception')
+
+    def test_invalid_branching_pipeline_branches_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A outputs tuples
+            output = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+
+        class B(Pipe):
+            input = Pipe.type.b
+            output = Pipe.type.x
+
+        class C(Pipe):
+            input = Pipe.type.c
+            output = Pipe.type.x
+
+        class D(Pipe):
+            input = Pipe.type.d
+            output = Pipe.type.x
+
+        class E(Pipe):
+            input = (Pipe.type.b, Pipe.type.c, Pipe.type.d)
+            output = Pipe.type.e
+
+        self.assertRaises(Exception, Pipeline, A(), (B(), C(), D()), (B(), C(), D()), E())
+
+    def test_valid_branching_pipeline_one_output_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A does not output tuples
+            output = Pipe.type.x
+
+        class B(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.d_out)
+            output = Pipe.type.e
+
+        try:
+            Pipeline(
+                A(),
+                (B(), C(), D()),
+                E()
+            )
+        except Exception:
+            self.fail('Valid pipeline raised exception')
+
+    def test_invalid_branching_pipeline_one_output_to_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A does not output tuples
+            output = Pipe.type.x
+
+        class B(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.y
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.d_out)
+            output = Pipe.type.e
+
+        self.assertRaises(Exception, Pipeline, A(), (B(), C(), D()), E())
+
+    def test_invalid_branching_pipeline_reduce_pipe(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A does not output tuples
+            output = Pipe.type.x
+
+        class B(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.y)
+            output = Pipe.type.e
+
+        self.assertRaises(Exception, Pipeline, A(), (B(), C(), D()), E())
+
+    def test_valid_branching_pipeline_start_with_branches(self):
+        class B(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.d_out
+
+        class E(Pipe):
+            input = (Pipe.type.b_out, Pipe.type.c_out, Pipe.type.d_out)
+            output = Pipe.type.e
+
+        try:
+            Pipeline(
+                (B(), C(), D()),
+                E()
+            )
+        except Exception:
+            self.fail('Valid pipeline raised exception')
+
+    def test_valid_branching_pipeline_end_with_branches(self):
+        class A(Pipe):
+            input = Pipe.type.a
+            # A does not output tuples
+            output = Pipe.type.x
+
+        class B(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.b_out
+
+        class C(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.c_out
+
+        class D(Pipe):
+            input = Pipe.type.x
+            output = Pipe.type.d_out
+
+        try:
+            Pipeline(
+                A(),
+                (B(), C(), D()),
+            )
+        except Exception:
+            self.fail('Valid pipeline raised exception')
+
+    def test_branching_pipeline(self):
+        class A(Pipe):
+            input = Pipe.type.vals
+            output = Pipe.type.vals
+            def __call__(self, vals):
+                return [v+1 for v in vals]
+
+        class B(Pipe):
+            input = Pipe.type.vals
+            output = Pipe.type.vals
+            def __call__(self, vals):
+                return [v+2 for v in vals]
+
+        class C(Pipe):
+            input = Pipe.type.vals
+            output = Pipe.type.vals
+            def __call__(self, vals):
+                return [v+3 for v in vals]
+
+        class D(Pipe):
+            input = Pipe.type.vals
+            output = Pipe.type.vals
+            def __call__(self, vals):
+                return [v+4 for v in vals]
+
+        class E(Pipe):
+            input = (Pipe.type.vals, Pipe.type.vals, Pipe.type.vals)
+            output = Pipe.type.vals
+            def __call__(self, vals1, vals2, vals3):
+                return [sum([v1,v2,v3]) for v1,v2,v3 in zip(vals1,vals2,vals3)]
+
+        p = Pipeline(
+            A(),
+            (B(), C(), D()),
+            (B(), C(), D()),
+            E()
+        )
+
+        out = p([1,2,3,4])
+        self.assertEqual(out, [24,27,30,33])

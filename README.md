@@ -69,6 +69,10 @@ vecs = p(docs)
 
 Pipelines allow you to chain `broca`'s objects and easily swap them out.
 
+Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components ("pipes") are compatible.
+
+### Multi-pipelines
+
 You can also build multi-pipelines to try out a variety of pipelines simultaneously:
 
 ```python
@@ -80,6 +84,13 @@ p = Pipeline(
 
 vecs1, vecs2 = p(docs)
 ```
+
+This results in two pipelines:
+
+- `HTMLCleaner() -> Cleaner() -> BoW()`
+- `HTMLCleaner() -> Cleaner() -> DCS()`
+
+### Nesting pipelines
 
 You can also nest pipelines and multi-pipelines:
 
@@ -97,7 +108,71 @@ vectr_pipeline = Pipeline(
 vecs1, vecs2 = p(docs)
 ```
 
-Pipelines are validated upon creation to ensure that the outputs and inputs of adjacent components ("pipes") are compatible.
+### Branching
+
+Pipes can support input from multiple pipes or output to multiple pipes simultaneously.
+
+Where multi-pipelines create distinct and separate pipelines, a branching pipeline is a singular pipeline where its inputs get mapped at branching segments and reduced afterwards.
+
+Branches are specified as tuples.
+
+Here's an example:
+
+```python
+class A(Pipe):
+    input = Pipe.type.vals
+    output = Pipe.type.vals
+    def __call__(self, vals):
+        return [v+1 for v in vals]
+
+class B(Pipe):
+    input = Pipe.type.vals
+    output = Pipe.type.vals
+    def __call__(self, vals):
+        return [v+2 for v in vals]
+
+class C(Pipe):
+    input = Pipe.type.vals
+    output = Pipe.type.vals
+    def __call__(self, vals):
+        return [v+3 for v in vals]
+
+class D(Pipe):
+    input = Pipe.type.vals
+    output = Pipe.type.vals
+    def __call__(self, vals):
+        return [v+4 for v in vals]
+
+class E(Pipe):
+    input = (Pipe.type.vals, Pipe.type.vals, Pipe.type.vals)
+    output = Pipe.type.vals
+    def __call__(self, vals1, vals2, vals3):
+        return [sum([v1,v2,v3]) for v1,v2,v3 in zip(vals1,vals2,vals3)]
+
+branching_pipeline = Pipeline(
+        A(),
+        (B(), C(), D()) # A branching segment
+        (B(), C(), D()) # Another branching segment
+        E()             # Reduced
+)
+
+p([1,2,3,4])
+# [24,27,30,33]
+```
+
+Whatever follows a branching segment must accept multiple inputs - this could be a single Pipe or another branching segment of equal size.
+
+Alternatively, the `A` Pipe in the example could have had its output defined as a tuple:
+
+```python
+class A(Pipe):
+    input = Pipe.type.vals
+    output = (Pipe.type.vals, Pipe.type.vals, Pipe.type.vals)
+    def __call__(self, vals):
+        return [v+1 for v in vals], [v+2 for v in vals], [v+3 for v in vals]
+
+# Running the above with A defined as such returns [27, 30, 33, 36] instead.
+```
 
 ### Freezing pipes
 

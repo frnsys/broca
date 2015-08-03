@@ -3,6 +3,7 @@ from broca import Pipe, Pipeline, IdentityPipe
 from broca.similarity import doc as doc_sim
 from broca.similarity import term as term_sim
 from broca.tokenize.keyword import RAKETokenizer
+from broca.entity import Entities
 
 
 class DocSimilarityTests(unittest.TestCase):
@@ -25,6 +26,19 @@ class DocSimilarityTests(unittest.TestCase):
             (IdentityPipe(Pipe.type.docs), RAKETokenizer()),
             doc_sim.WikipediaSimilarity()
         )
+        sims = p(self.docs)
+        self.assertEqual(sims.shape, (3,3))
+
+    def test_entkey(self):
+        class FauxIDF():
+            def __getitem__(self, key):
+                return 1.
+
+        p = Pipeline(
+            (RAKETokenizer(), Entities()),
+            doc_sim.EntKeySimilarity(idf=FauxIDF())
+        )
+
         sims = p(self.docs)
         self.assertEqual(sims.shape, (3,3))
 

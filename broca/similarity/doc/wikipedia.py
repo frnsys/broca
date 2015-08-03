@@ -15,9 +15,8 @@ from broca.knowledge.wikipedia import Wikipedia
 from broca.vectorize.bow import BoWVectorizer
 
 
-class WikipediaSimilarity(Pipe, Wikipedia, DocSimilarity):
-    input = (Pipe.type.docs, Pipe.type.tokens)
-    output = Pipe.type.sim_mat
+class WikipediaSimilarity(Wikipedia, DocSimilarity):
+    input = Pipe.type.docs, Pipe.type.tokens
 
     def __init__(self, vectorizer=BoWVectorizer, wiki_conn=None):
         super().__init__(wiki_conn=wiki_conn)

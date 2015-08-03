@@ -2,20 +2,14 @@
 Term similarity classes provide similarity values for a pair of documents.
 """
 
+from broca import Pipe
 
-class DocSimilarity():
+
+class DocSimilarity(Pipe):
     """
     Doc similarity classes should inherit from this class
     """
-
-    def __getitem__(self, docs):
-        """
-        Args:
-            - docs -> a 2-tuple of strings
-
-        Returns: a scalar value
-        """
-        raise NotImplementedError
+    output = Pipe.type.sim_mat
 
     def sim_mat(self, docs):
         """
@@ -24,7 +18,8 @@ class DocSimilarity():
 
         Returns: a similarity matrix
         """
-        pass
+        raise NotImplementedError
 
 
 from .wikipedia import WikipediaSimilarity
+from .entkey import EntKeySimilarity

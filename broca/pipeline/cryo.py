@@ -33,6 +33,8 @@ class CryoEncoder(json.JSONEncoder):
                         shape=obj.shape,
                         indices=obj.indices,
                         indptr=obj.indptr)
+        elif hasattr(obj, '__dict__'):
+            return obj.__dict__
         # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
 

@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 from broca.knowledge.util import merge, split_file, doc_stream
 
 
-def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, **kwargs):
+def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, preprocessor=None, **kwargs):
     """
     Train a IDF model on a list of files (parallelized).
     """
@@ -17,7 +17,7 @@ def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, **kwargs):
         args += [(file,) for file in split_file(path, chunk_size=5000)]
 
     print('Counting terms...')
-    p_count_idf = partial(count_idf, tokenizer=tokenizer)
+    p_count_idf = partial(count_idf, tokenizer=tokenizer, preprocessor=preprocessor)
     results = parallelize(p_count_idf, args)
 
     idfs, n_docs = zip(*results)
@@ -38,10 +38,10 @@ def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, **kwargs):
         json.dump(idf, f)
 
 
-def count_idf(path, tokenizer):
+def count_idf(path, tokenizer, preprocessor):
     N = 0
     idf = defaultdict(int)
-    for tokens in doc_stream(path):
+    for tokens in doc_stream(path, tokenizer=tokenizer, preprocessor=preprocessor):
         N += 1
         # Don't count freq, just presence
         for token in set(tokens):

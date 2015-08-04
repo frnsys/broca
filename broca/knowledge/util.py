@@ -52,11 +52,13 @@ def split_file(path, chunk_size=50000):
             yield chunk_path
 
 
-def doc_stream(path, tokenizer=word_tokenize):
+def doc_stream(path, tokenizer=word_tokenize, preprocessor=None):
     """
     Generator to feed tokenized documents (treating each line as a document).
     """
     with open(path, 'r') as f:
         for line in f:
             if line.strip():
+                if preprocessor is not None:
+                    line = preprocessor(line)
                 yield tokenizer(line)

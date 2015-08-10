@@ -34,8 +34,8 @@ class EntKeySimilarity(DocSimilarity):
         Optionally pass in a `term_sim_ref` dict-like, which should be able
         to take `term1, term2` as args and return their similarity.
         """
-        es = set(d.entities)
-        es_ = set(d_.entities)
+        es = set([e.name for e in d.entities])
+        es_ = set([e.name for e in d_.entities])
         e_weight = (len(es) + len(es_) - abs(len(es) - len(es_)))/2
         e_score = sum(self.idf_entity[t] for t in es & es_)
 

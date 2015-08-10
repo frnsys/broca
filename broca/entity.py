@@ -1,5 +1,6 @@
 from broca import Pipe
 from broca.common.shared import spacy
+from broca.common.util import parallel
 
 
 class Entities(Pipe):
@@ -9,13 +10,18 @@ class Entities(Pipe):
     input = Pipe.type.docs
     output = Pipe.type.entities
 
+    def __init__(self, n_jobs=1):
+        self.n_jobs = n_jobs
+
     def __call__(self, docs):
-        entities = []
-        for doc in docs:
-            res = spacy(doc, entity=True, tag=True, parse=False)
-            ents = [Entity(e.string, e.label_) for e in res.ents]
-            entities.append(ents)
-        return entities
+        if self.n_jobs == 1:
+            return [self._extract(doc) for doc in docs]
+        else:
+            return parallel(self._extract, docs, self.n_jobs)
+
+    def _extract(self, doc):
+        res = spacy(doc, entity=True, tag=True, parse=False)
+        return [Entity(e.string, e.label_) for e in res.ents]
 
 
 class Entity():

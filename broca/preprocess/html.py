@@ -15,7 +15,7 @@ class HTMLCleaner(PreProcessor):
         self.n_jobs = n_jobs
 
     def preprocess(self, docs):
-        print('HTML cleaning...')
+        #print('HTML cleaning...')
         if self.n_jobs == 1:
             return [strip_html(d) for d in docs]
         else:

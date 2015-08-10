@@ -20,24 +20,36 @@ class OverkillTokenizer(Tokenizer):
         if self.lemmatize:
             lem = WordNetLemmatizer()
 
-        print('RAKE tokenizing...')
+        #print('RAKE tokenizing...')
         pre_tdocs = RAKETokenizer(n_jobs=self.n_jobs).tokenize(docs)
 
-        print('Additional Tokenizing docs...')
+        for i, tdoc in enumerate(pre_tdocs):
+            for t in tdoc:
+                if t.startswith('one'):
+                    print(t)
+                    print(i)
+
+        #print('Additional Tokenizing docs...')
         if self.n_jobs == 1:
             tdocs = [pre_tokenize(doc, tdoc, lem=lem) for doc, tdoc in zip(docs, pre_tdocs)]
         else:
             tdocs = parallel(partial(pre_tokenize, lem=lem), zip(docs, pre_tdocs), self.n_jobs, expand_args=True)
 
-        print('Training bigram...')
+        #print('Training bigram...')
         if self.bigram is None:
-            self.bigram = Phrases(tdocs, min_count=1, threshold=0.1, delimiter=b' ')
+            self.bigram = Phrases(tdocs,
+                                  min_count=self.min_count,
+                                  threshold=self.threshold,
+                                  delimiter=b' ')
         else:
             self.bigram.add_vocab(tdocs)
 
-        print('Training trigram...')
+        #print('Training trigram...')
         if self.trigram is None:
-            self.trigram = Phrases(self.bigram[tdocs], delimiter=b' ')
+            self.trigram = Phrases(self.bigram[tdocs],
+                                   min_count=self.min_count,
+                                   threshold=self.threshold,
+                                   delimiter=b' ')
         else:
             self.trigram.add_vocab(self.bigram[tdocs])
 

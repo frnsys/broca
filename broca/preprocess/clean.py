@@ -14,7 +14,7 @@ punct = (string.punctuation + '“”–').replace('-', '')
 strip_map = {ord(p): '' for p in '\''}
 punct_map = {ord(p): ' ' for p in punct}
 url_re = re.compile(r'https?:\/\/.*[\r\n]*', flags=re.MULTILINE)
-whs_re = re.compile(r'\W{2,}')
+whs_re = re.compile(r'\s{2,}')
 
 
 class BasicCleaner(PreProcessor):
@@ -26,7 +26,7 @@ class BasicCleaner(PreProcessor):
         self.n_jobs = n_jobs
 
     def preprocess(self, docs):
-        print('Cleaning...')
+        #print('Cleaning...')
         clean_func = partial(
             clean,
             remove_urls=self.remove_urls,

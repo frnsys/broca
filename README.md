@@ -44,9 +44,10 @@ If developing, you can clone the repo and from within the repo directory, instal
 
 Your installed version will be aliased directly from the repo directory, so changes are always immediately accessible.
 
-You also need to install the `spacy` library's data:
+You also need to install the `spacy` and `nltk` libraries' data:
 
     $ python -m spacy.en.download
+    $ python -m nltk.downloader all
 
 
 ## Usage

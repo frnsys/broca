@@ -1,4 +1,5 @@
 import numpy as np
+from joblib import Parallel, delayed
 
 
 def penn_to_wordnet(tag):
@@ -54,3 +55,12 @@ def dist_to_sim(dist_mat):
     """
     return 1-np.square(dist_mat/np.max(dist_mat))
 
+
+def parallel(func, inputs, n_jobs, expand_args=False):
+    """
+    Convenience wrapper around joblib's parallelization.
+    """
+    if expand_args:
+        return Parallel(n_jobs=n_jobs)(delayed(func)(*args) for args in inputs)
+    else:
+        return Parallel(n_jobs=n_jobs)(delayed(func)(arg) for arg in inputs)

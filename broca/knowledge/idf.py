@@ -1,32 +1,23 @@
 import json
 import math
-from functools import partial
 from collections import defaultdict
-from sup.parallel import parallelize
-from nltk.tokenize import word_tokenize
-from broca.knowledge.util import merge, split_file, doc_stream
+from broca.common.util import parallel
+from broca.knowledge.util import merge
 
 
-def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, preprocessor=None, **kwargs):
+def train_idf(tokens_stream, out='data/idf.json', **kwargs):
     """
     Train a IDF model on a list of files (parallelized).
     """
-    print('Preparing files...')
-    args = []
-    for path in paths:
-        args += [(file,) for file in split_file(path, chunk_size=5000)]
-
     print('Counting terms...')
-    p_count_idf = partial(count_idf, tokenizer=tokenizer, preprocessor=preprocessor)
-    results = parallelize(p_count_idf, args)
 
-    idfs, n_docs = zip(*results)
+    idfs = parallel(count_idf, tokens_stream, n_jobs=-1)
+    N = len(idfs) # n docs
 
     print('Merging...')
     idf = merge(idfs)
 
     print('Computing IDFs...')
-    N = sum(n_docs)
     for k, v in idf.items():
         idf[k] = math.log(N/v)
         # v ~= N/(math.e ** idf[k])
@@ -38,15 +29,12 @@ def train_idf(paths, out='data/idf.json', tokenizer=word_tokenize, preprocessor=
         json.dump(idf, f)
 
 
-def count_idf(path, tokenizer, preprocessor):
-    N = 0
+def count_idf(tokens):
     idf = defaultdict(int)
-    for tokens in doc_stream(path, tokenizer=tokenizer, preprocessor=preprocessor):
-        N += 1
-        # Don't count freq, just presence
-        for token in set(tokens):
-            idf[token] += 1
-    return idf, N
+    # Don't count freq, just presence
+    for token in set(tokens):
+        idf[token] += 1
+    return idf
 
 
 class IDF():

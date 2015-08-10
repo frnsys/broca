@@ -11,10 +11,12 @@ class KeywordTokenizeTests(unittest.TestCase):
 
     def test_overkill(self):
         expected_t_docs = [
-            ['run', 'happy', 'cat dog'],
-            ['run', 'sad', 'cat dog']
+            ['cat dog', 'run', 'happy'],
+            ['cat dog', 'run', 'sad']
         ]
-        t_docs = keyword.OverkillTokenizer(prune=True, lemmatize=True).tokenize(self.docs)
+        t_docs = keyword.OverkillTokenizer(lemmatize=True,
+                                           min_count=1,
+                                           threshold=0.1).tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
 
     def test_rake(self):
@@ -43,6 +45,28 @@ class KeywordTokenizeTests(unittest.TestCase):
         ]
         t_docs = keyword.POSTokenizer().tokenize(self.docs)
         self.assertEqual(t_docs, expected_t_docs)
+
+    def test_overkill_parallel(self):
+        expected_t_docs = [
+            ['cat dog', 'run', 'happy'],
+            ['cat dog', 'run', 'sad']
+        ]
+        t_docs = keyword.OverkillTokenizer(lemmatize=True,
+                                           min_count=1,
+                                           threshold=0.1,
+                                           n_jobs=2).tokenize(self.docs)
+        self.assertEqual(t_docs, expected_t_docs)
+
+    def test_rake_parallel(self):
+        expected_t_docs = [
+            ['cat dog', 'running happy'],
+            ['cat dog runs sad']
+        ]
+        t_docs = keyword.RAKETokenizer(n_jobs=-1).tokenize(self.docs)
+
+        # Order not necessarily preserved
+        for i, output in enumerate(t_docs):
+            self.assertEqual(set(output), set(expected_t_docs[i]))
 
 
 class TokenizeTests(unittest.TestCase):

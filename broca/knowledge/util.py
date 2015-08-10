@@ -2,8 +2,7 @@ import os
 import numpy as np
 from itertools import chain, islice
 from collections import defaultdict
-from sup.parallel import parallelize
-from nltk.tokenize import word_tokenize
+from broca.common.util import parallel
 
 
 def merge(dicts):
@@ -11,9 +10,8 @@ def merge(dicts):
     Merges a list of dicts, summing their values.
     (Parallelized wrapper around `_count`)
     """
-    # Split into 20 chunks
-    args_chunks = [(args,) for args in np.array_split(dicts, 20)]
-    results = parallelize(_count, args_chunks)
+    chunks = [args for args in np.array_split(dicts, 20)]
+    results = parallel(_count, chunks, n_jobs=-1)
     return _count(results)
 
 
@@ -52,13 +50,20 @@ def split_file(path, chunk_size=50000):
             yield chunk_path
 
 
-def doc_stream(path, tokenizer=word_tokenize, preprocessor=None):
+def doc_stream(path):
     """
     Generator to feed tokenized documents (treating each line as a document).
     """
     with open(path, 'r') as f:
         for line in f:
             if line.strip():
-                if preprocessor is not None:
-                    line = preprocessor(line)
-                yield tokenizer(line)
+                yield line
+
+
+def files_stream(files):
+    """
+    Stream lines from multiple files.
+    """
+    for file in files:
+        for line in doc_stream(file):
+            yield line

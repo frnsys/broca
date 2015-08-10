@@ -1,26 +1,15 @@
 import json
-from functools import partial
 from collections import defaultdict
-from sup.parallel import parallelize
-from nltk.tokenize import word_tokenize
-from broca.knowledge.util import merge, split_file, doc_stream
+from broca.common.util import parallel
+from broca.knowledge.util import merge
 
 
-def train_tf(paths, out='data/tf.json', tokenizer=word_tokenize, preprocessor=None, **kwargs):
+def train_tf(tokens_stream, out='data/tf.json', **kwargs):
     """
     Train a map of term frequencies on a list of files (parallelized).
     """
-    print('Preparing files')
-    args = []
-    method = kwargs.get('method', 'keyword')
-    for path in paths:
-        args += [(file, method) for file in split_file(path, chunk_size=5000)]
-
-    # Leave a generous timeout in case the
-    # phrases model needs to be loaded.
     print('Counting terms...')
-    p_count_tf = partial(count_tf, tokenizer=tokenizer, preprocessor=preprocessor)
-    results = parallelize(p_count_tf, args, timeout=360)
+    results = parallel(count_tf, tokens_stream, n_jobs=-1)
 
     print('Merging...')
     tf = merge(results)
@@ -29,12 +18,12 @@ def train_tf(paths, out='data/tf.json', tokenizer=word_tokenize, preprocessor=No
         json.dump(tf, f)
 
 
-def count_tf(path, tokenizer, preprocessor):
+def count_tf(tokens_stream):
     """
     Count term frequencies for a single file.
     """
     tf = defaultdict(int)
-    for tokens in doc_stream(path, tokenizer=tokenizer, preprocessor=preprocessor):
+    for tokens in tokens_stream:
         for token in tokens:
             tf[token] += 1
     return tf

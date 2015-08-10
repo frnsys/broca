@@ -5,3 +5,4 @@ scipy==0.15.1
 spacy==0.88
 scikit-learn==0.16.0
 eatiht==0.1.14
+joblib==0.8.4

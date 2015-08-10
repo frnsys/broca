@@ -13,26 +13,30 @@ class PipelineTests(unittest.TestCase):
 
     def test_pipeline(self):
         expected = [
-            ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
-            ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
+            ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage', 'existence'],
+            ['galactic', 'ocean', 'float', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage', 'reach']
         ]
-        pipeline = Pipeline(BasicCleaner(), OverkillTokenizer())
+        pipeline = Pipeline(BasicCleaner(), OverkillTokenizer(min_count=1, threshold=0.1), refresh=True)
         output = pipeline(self.docs)
         for o, e in zip(output, expected):
             self.assertEqual(set(o), set(e))
 
     def test_incompatible_pipeline(self):
-        self.assertRaises(Exception, Pipeline, OverkillTokenizer(), BasicCleaner())
+        self.assertRaises(Exception, Pipeline, OverkillTokenizer(), BasicCleaner(), refresh=True)
 
     def test_multi_pipeline(self):
         pipeline = Pipeline(
             BasicCleaner(),
-            [OverkillTokenizer(), RAKETokenizer()]
+            [
+                OverkillTokenizer(min_count=1, threshold=0.1),
+                RAKETokenizer()
+            ],
+            refresh=True
         )
         expected = [
             [
-                ['vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
-                ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
+                ['vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage', 'existence'],
+                ['galactic', 'ocean', 'float', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage', 'reach']
             ],
             [
                 ['great nicolas cage', 'vast empty', 'sprung', 'nonexistence', 'dimensions', 'held', 'existence', 'displeased', 'continue', 'time', 'space'],
@@ -47,11 +51,11 @@ class PipelineTests(unittest.TestCase):
     def test_nested_pipeline(self):
         docs = ['<div>{}</div>'.format(d) for d in self.docs]
         expected = [
-            ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
-            ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
+            ['time', 'vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage', 'existence'],
+            ['galactic', 'ocean', 'float', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage', 'reach']
         ]
-        nested_pipeline = Pipeline(HTMLCleaner(), BasicCleaner())
-        pipeline = Pipeline(nested_pipeline, OverkillTokenizer())
+        nested_pipeline = Pipeline(HTMLCleaner(), BasicCleaner(), refresh=True)
+        pipeline = Pipeline(nested_pipeline, OverkillTokenizer(), refresh=True)
         output = pipeline(docs)
         for o, e in zip(output, expected):
             self.assertEqual(set(o), set(e))
@@ -60,8 +64,8 @@ class PipelineTests(unittest.TestCase):
         docs = ['<div>{}</div>'.format(d) for d in self.docs]
         expected = [
             [
-                ['vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage'],
-                ['galactic', 'ocean', 'float', 'reach', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'reach', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage']
+                ['vast', 'empty', 'space', 'time', 'continue', 'dimension', 'hold', 'nonexistence', 'great', 'spring', 'displeased', 'nicolas cage', 'existence'],
+                ['galactic', 'ocean', 'float', 'hand', 'grasp', 'look', 'glorious', 'eye', 'instantaneously', 'begin', 'stretch', 'bend', 'find', 'amusement', 'handling', 'sacred', 'galactic', 'sea', 'mighty', 'hand', 'ocean', 'sacred', 'warmth', 'mighty', 'palm', 'cage reach', 'nicolas cage', 'reach']
             ],
             [
                 ['great nicolas cage', 'vast empty', 'sprung', 'nonexistence', 'dimensions', 'held', 'existence', 'displeased', 'continue', 'time', 'space'],
@@ -70,9 +74,13 @@ class PipelineTests(unittest.TestCase):
         ]
         nested_multipipeline = Pipeline(
             BasicCleaner(),
-            [OverkillTokenizer(), RAKETokenizer()]
+            [
+                OverkillTokenizer(min_count=1, threshold=0.1),
+                RAKETokenizer()
+            ],
+            refresh=True
         )
-        pipeline = Pipeline(HTMLCleaner(), nested_multipipeline)
+        pipeline = Pipeline(HTMLCleaner(), nested_multipipeline, refresh=True)
         outputs = pipeline(docs)
         for i, output in enumerate(outputs):
             for o, e in zip(output, expected[i]):

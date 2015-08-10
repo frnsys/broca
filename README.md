@@ -246,6 +246,12 @@ p = Pipeline(
 
 ```
 
+## Parallel processing
+
+Some pipes, including `OverkillTokenizer`, `RakeTokenizer`, `BasicCleaner`, and `HTMLCleaner`), have support for parallel processing (multiprocessing) which is activated by specifying the `n_jobs` keyword argument as something other than 0, e.g. `RakeTokenizer(n_jobs=4)`. If `n_jobs` is less than 1, the total number of cores minus that value will be used. For instance, if `n_jobs=-1` and your machine has 4 cores, then 3 cores will be used.
+
+There is a bit of an overhead to setup multiprocessing; the performance gains are only seen with larger amounts of data. There's also an additional memory cost for each separate process, so keep in mind that there is a speed/memory trade-off.
+
 
 ## Examples
 

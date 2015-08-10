@@ -1,4 +1,5 @@
 import re
+from broca.common.util import parallel
 from broca.preprocess import PreProcessor
 
 try:
@@ -10,8 +11,15 @@ whitespace = re.compile(r'\s{2,}')
 
 
 class HTMLCleaner(PreProcessor):
+    def __init__(self, n_jobs=1):
+        self.n_jobs = n_jobs
+
     def preprocess(self, docs):
-        return [strip_html(d) for d in docs]
+        print('HTML cleaning...')
+        if self.n_jobs == 1:
+            return [strip_html(d) for d in docs]
+        else:
+            return parallel(strip_html, docs, self.n_jobs)
 
 
 def decode_html(s):

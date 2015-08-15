@@ -5,7 +5,7 @@ from broca.common.util import parallel
 from broca.knowledge.util import merge
 
 
-def train_idf(tokens_stream, out='data/idf.json', **kwargs):
+def train_idf(tokens_stream, out=None, **kwargs):
     """
     Train a IDF model on a list of files (parallelized).
     """
@@ -25,8 +25,11 @@ def train_idf(tokens_stream, out='data/idf.json', **kwargs):
     # Keep track of N to update IDFs
     idf['_n_docs'] = N
 
-    with open(out, 'w') as f:
-        json.dump(idf, f)
+    if out is not None:
+        with open(out, 'w') as f:
+            json.dump(idf, f)
+
+    return idf
 
 
 def count_idf(tokens):

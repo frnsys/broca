@@ -4,7 +4,7 @@ from broca.common.util import parallel
 from broca.knowledge.util import merge
 
 
-def train_tf(tokens_stream, out='data/tf.json', **kwargs):
+def train_tf(tokens_stream, out=None, **kwargs):
     """
     Train a map of term frequencies on a list of files (parallelized).
     """
@@ -14,8 +14,11 @@ def train_tf(tokens_stream, out='data/tf.json', **kwargs):
     print('Merging...')
     tf = merge(results)
 
-    with open(out, 'w') as f:
-        json.dump(tf, f)
+    if out is not None:
+        with open(out, 'w') as f:
+            json.dump(tf, f)
+
+    return tf
 
 
 def count_tf(tokens_stream):

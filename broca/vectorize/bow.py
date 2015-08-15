@@ -20,7 +20,7 @@ class Tokenizer():
 
 
 class BoWVectorizer(Vectorizer):
-    def __init__(self, min_df=0.015, max_df=0.9, tokenizer=LemmaTokenizer, hash=False):
+    def __init__(self, min_df=1, max_df=0.9, tokenizer=LemmaTokenizer, hash=False):
         """
         `min_df` is set to filter out extremely rare words,
         since we don't want those to dominate the distance metric.

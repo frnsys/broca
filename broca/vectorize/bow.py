@@ -9,6 +9,16 @@ from broca.vectorize import Vectorizer
 from broca.tokenize import LemmaTokenizer
 
 
+class Tokenizer():
+    """
+    Wrap broca tokenizers
+    """
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+    def __call__(self, doc):
+        return self.tokenizer.tokenize([doc])[0]
+
+
 class BoWVectorizer(Vectorizer):
     def __init__(self, min_df=0.015, max_df=0.9, tokenizer=LemmaTokenizer, hash=False):
         """
@@ -20,15 +30,12 @@ class BoWVectorizer(Vectorizer):
         """
 
         # Wrap the specified tokenizer
-        t = tokenizer()
-        class Tokenizer():
-            def __call__(self, doc):
-                return t.tokenize([doc])[0]
+        t = Tokenizer(tokenizer())
 
         if hash:
-            vectr = HashingVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=Tokenizer())
+            vectr = HashingVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=t)
         else:
-            vectr = CountVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=Tokenizer(), min_df=min_df, max_df=max_df)
+            vectr = CountVectorizer(input='content', stop_words='english', lowercase=True, tokenizer=t, min_df=min_df, max_df=max_df)
 
         args = [
             ('vectorizer', vectr),

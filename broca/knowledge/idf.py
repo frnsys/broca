@@ -9,15 +9,10 @@ def train_idf(tokens_stream, out=None, **kwargs):
     """
     Train a IDF model on a list of files (parallelized).
     """
-    print('Counting terms...')
-
     idfs = parallel(count_idf, tokens_stream, n_jobs=-1)
     N = len(idfs) # n docs
-
-    print('Merging...')
     idf = merge(idfs)
 
-    print('Computing IDFs...')
     for k, v in idf.items():
         idf[k] = math.log(N/v)
         # v ~= N/(math.e ** idf[k])

@@ -1,5 +1,5 @@
 Cython==0.22
-nltk==3.0.2
+nltk==3.4.5
 numpy==1.9.2
 scipy==0.16.0
 spacy==0.88

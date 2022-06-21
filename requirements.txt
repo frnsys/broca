@@ -1,6 +1,6 @@
 Cython==0.22
 nltk==3.0.2
-numpy==1.9.2
+numpy==1.22.0
 scipy==0.16.0
 spacy==0.88
 scikit-learn==0.16.0
